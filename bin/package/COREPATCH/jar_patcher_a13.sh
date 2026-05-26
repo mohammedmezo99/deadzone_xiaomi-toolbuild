@@ -369,7 +369,7 @@ ${indent}const/4 v1, 0x0" "$file"
 
 # Main framework patching function
 patch_framework() {
-  local framework_path="$work_dir/framework.jar"
+  local framework_path="$work_dir/images/system/system/framework/framework.jar"
   local decompile_dir="$work_dir/framework_decompile"
 
   echo "Starting framework.jar patch..."
@@ -460,7 +460,7 @@ ${indent}const/4 v2, 0x0" "$file"
 
 # Main services patching function
 patch_services() {
-  local services_path="$work_dir/services.jar"
+  local services_path="$work_dir/images/system/system/framework/services.jar"
   local decompile_dir="$work_dir/services_decompile"
 
   echo "Starting services.jar patch..."
@@ -518,7 +518,7 @@ apply_miui_services_floating() {
 
 # Main miui-services patching function
 patch_miui_services() {
-  local miui_services_path="$work_dir/miui-services.jar"
+  local miui_services_path="$work_dir/images/system_ext/framework/miui-services.jar"
   local decompile_dir="$work_dir/miui-services_decompile"
 
   echo "Starting miui-services.jar patch..."
@@ -561,7 +561,7 @@ apply_miui_framework_gboard() {
 
 # Main miui-framework patching function
 patch_miui_framework() {
-  local miui_framework_path="$work_dir/miui-framework.jar"
+  local miui_framework_path="$work_dir/images/system_ext/framework/miui-framework.jar"
   local decompile_dir="$work_dir/miui-framework_decompile"
 
   echo "Starting miui-framework.jar patch..."
