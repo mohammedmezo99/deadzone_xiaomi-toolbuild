@@ -1,7 +1,18 @@
 #!/bin/bash
 
-normalize_style_id() {
-    local raw="${1:-Lite}"
+is_supported_style() {
+    case "${1:-}" in
+        [Ll]ite|[Pp]lus|[Ss]table|[Ff]ree|[Gg]aming[Pp]lus|[Gg]aming_[Pp]lus|[Ll]egend|[Pp]aid|[Nn]inja)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
+}
+
+resolve_style_id() {
+    local raw="${1:-}"
     case "${raw,,}" in
         lite)
             printf 'lite\n'
@@ -16,9 +27,13 @@ normalize_style_id() {
             printf 'ninja\n'
             ;;
         *)
-            printf 'lite\n'
+            return 1
             ;;
     esac
+}
+
+normalize_style_id() {
+    resolve_style_id "${1:-Lite}" 2>/dev/null || printf 'lite\n'
 }
 
 style_display_name() {

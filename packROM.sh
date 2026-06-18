@@ -2,7 +2,8 @@ work_dir=$(pwd)
 export WORK_DIR="$work_dir"
 export DZ_NOTIFY_STAGE="pack"
 source $work_dir/functions.sh
-tools_dir=${work_dir}/bin/$(uname)/$(uname -m)export PATH=$(pwd)/bin/$(uname)/$(uname -m)/:$PATH
+tools_dir=${work_dir}/bin/$(uname)/$(uname -m)
+export PATH="$(pwd)/bin/$(uname)/$(uname -m):$PATH"
 super_list="vendor mi_ext odm odm_dlkm system system_dlkm vendor_dlkm product product_dlkm system_ext"
 os_type=$(cat $work_dir/bin/ddevice/os_type.txt)
 base_rom_code=$(cat $work_dir/bin/ddevice/base_rom_code.txt)

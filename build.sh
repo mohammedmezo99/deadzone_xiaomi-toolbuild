@@ -12,7 +12,10 @@ export DZ_NOTIFY_BUILDER_NAME="$builder_name"
 export DZ_NOTIFY_BUILDER_ID="$builder_id"
 source "$work_dir/bin/ddevice/style.sh"
 raw_style="${STYLE:-${DZ_STYLE_ID:-${INPUT_STYLE:-Lite}}}"
-style_id="$(normalize_style_id "$raw_style")"
+if ! style_id="$(resolve_style_id "$raw_style")"; then
+    echo "[ERROR] - Unsupported STYLE value: ${raw_style:-<empty>}. Expected one of Lite, GamingPlus, Legend, Ninja." >&2
+    exit 1
+fi
 style_name="$(style_display_name "$style_id")"
 style_zip_name="$(style_zip_prefix "$style_id")"
 style_tier="$(style_tier_name "$style_id")"
@@ -77,8 +80,12 @@ apply_deadzone_style_runtime() {
     export SDK_VERSION="$(cat "$work_dir/bin/ddevice/sdkLevel.txt" 2>/dev/null)"
     export ANDROID_SDK="$SDK_VERSION"
 
+    info "Selected style: $style_name"
+
     case "$style_id" in
         lite)
+            mods "Applying DeadZone Lite style"
+            info "Skipping DeadZone Ninja style because STYLE=$style_name"
             if [[ "$platform_id" == "OS3_A16" ]]; then
                 mods "Applying Lite OS3_A16 manual runtime pack."
                 bash "$work_dir/DeadZone/Patches/ModFile/OS3_A16/Lite/insmod.sh" "$rom_root" || {
@@ -90,12 +97,17 @@ apply_deadzone_style_runtime() {
             fi
             ;;
         gamingplus)
+            mods "Applying DeadZone GamingPlus style"
+            info "Skipping DeadZone Ninja style because STYLE=$style_name"
             info "GamingPlus follows the official Build inheritance path: Lite base runtime only."
             ;;
         legend)
+            mods "Applying DeadZone Legend style"
+            info "Skipping DeadZone Ninja style because STYLE=$style_name"
             info "Legend follows the official Build inheritance path: GamingPlus -> Lite base runtime only."
             ;;
         ninja)
+            mods "Applying DeadZone Ninja style"
             if [[ "$platform_id" == "OS3_A16" ]]; then
                 mods "Applying Ninja OS3_A16 manual runtime pack."
                 bash "$work_dir/DeadZone/Patches/ModFile/OS3_A16/Ninja/insmod.sh" "$rom_root" || {
@@ -106,10 +118,15 @@ apply_deadzone_style_runtime() {
                 info "Ninja OS3_A16 manual runtime pack is not applicable for ${platform_id:-unknown platform}."
             fi
             ;;
+        *)
+            error "Unsupported style route resolved to ${style_id:-<empty>}."
+            exit 1
+            ;;
     esac
 }
 # Import functions
-tools_dir=${work_dir}/bin/$(uname)/$(uname -m)export PATH=$(pwd)/bin/$(uname)/$(uname -m)/:$PATH
+tools_dir=${work_dir}/bin/$(uname)/$(uname -m)
+export PATH="$(pwd)/bin/$(uname)/$(uname -m):$PATH"
 chmod 777 ${work_dir}/bin/*
 chmod 777 ${work_dir}/bin/Linux/x86_64/*
 source $work_dir/functions.sh

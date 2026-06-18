@@ -229,6 +229,31 @@ def get_channel_id():
     return os.environ.get("TELEGRAM_CHAT_ID") or os.environ.get("TELEGRAM_CHANNEL_ID")
 
 
+def warn_telegram(message):
+    print(f"⚠️ Telegram notification warning: {message}")
+
+
+def has_valid_message_id(value):
+    if value is None:
+        return False
+    try:
+        int(str(value).strip())
+        return True
+    except (TypeError, ValueError):
+        return False
+
+
+def post_telegram(bot_token, method, payload):
+    url = f"https://api.telegram.org/bot{bot_token}/{method}"
+    response = requests.post(url, json=payload)
+    if response.ok:
+        return response.json()
+    if method == "editMessageText" and "message is not modified" in response.text.lower():
+        return {}
+    response.raise_for_status()
+    return {}
+
+
 def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id=None, build_id="Unknown", builder_name="", builder_id="", live_message=""):
     icon, status_title, status_desc = get_status_info(status)
     state = load_state()
@@ -357,33 +382,37 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
     message = "\n".join(message_lines)
 
     effective_msg_id = msg_id or state.get("message_id")
-    if effective_msg_id:
-        url = f"https://api.telegram.org/bot{bot_token}/editMessageText"
-        payload = {
-            "chat_id": channel_id,
-            "message_id": effective_msg_id,
-            "text": message,
-            "parse_mode": "Markdown",
-            "disable_web_page_preview": True,
-        }
-    else:
-        url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
-        payload = {
-            "chat_id": channel_id,
-            "text": message,
-            "parse_mode": "Markdown",
-            "disable_web_page_preview": True,
-        }
+    response_data = {}
+    used_fallback_send = False
 
-    response = requests.post(url, json=payload)
-    if not response.ok:
-        if "message is not modified" in response.text.lower():
-            response_data = {}
-        else:
-            response.raise_for_status()
-            response_data = {}
-    else:
-        response_data = response.json()
+    if channel_id and has_valid_message_id(effective_msg_id):
+        edit_payload = {
+            "chat_id": channel_id,
+            "message_id": int(str(effective_msg_id).strip()),
+            "text": message,
+            "parse_mode": "Markdown",
+            "disable_web_page_preview": True,
+        }
+        try:
+            response_data = post_telegram(bot_token, "editMessageText", edit_payload)
+        except requests.RequestException as error:
+            warn_telegram(f"edit failed, sent a new message instead. ({error})")
+            used_fallback_send = True
+
+    if not response_data and (used_fallback_send or not has_valid_message_id(effective_msg_id)):
+        send_payload = {
+            "chat_id": channel_id,
+            "text": message,
+            "parse_mode": "Markdown",
+            "disable_web_page_preview": True,
+        }
+        try:
+            response_data = post_telegram(bot_token, "sendMessage", send_payload)
+        except requests.RequestException as error:
+            warn_telegram(f"send failed. ({error})")
+            state["last_edit_at"] = time.time()
+            save_state(state)
+            return
 
     new_msg_id = response_data.get("result", {}).get("message_id")
     if new_msg_id:
@@ -396,7 +425,10 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
             file_handle.write(f"TELEGRAM_MSG_ID={new_msg_id}\n")
         print(f"Saved TELEGRAM_MSG_ID={new_msg_id} to GITHUB_ENV.")
 
-    print("Notification sent or updated successfully.")
+    if used_fallback_send:
+        print("Notification sent successfully using fallback sendMessage.")
+    else:
+        print("Notification sent or updated successfully.")
 
     target_builder_id = state.get("builder_id")
     if status.lower() in ["success", "fail"] and target_builder_id:
@@ -424,7 +456,7 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
             requests.post(pm_url, json=pm_payload)
             print(f"Sent a direct message to user {target_builder_id}.")
         except Exception as error:
-            print(f"Direct message error: {error}")
+            warn_telegram(f"direct message failed. ({error})")
 
 
 def main():
@@ -465,8 +497,8 @@ def main():
                 file_handle.write(f"TELEGRAM_BUILD_ID={build_id}\n")
 
     if not bot_token or not channel_id:
-        print("Error: TELEGRAM_BOT_TOKEN or TELEGRAM chat target is missing from the environment.")
-        sys.exit(1)
+        warn_telegram("TELEGRAM_BOT_TOKEN or TELEGRAM chat target is missing from the environment.")
+        sys.exit(0)
 
     state = load_state()
     if status == "activity":
@@ -479,8 +511,8 @@ def main():
     try:
         send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id, build_id, builder_name, builder_id, live_message=live_message)
     except Exception as error:
-        print(f"Notification error: {error}")
-        sys.exit(1)
+        warn_telegram(f"request failed. ({error})")
+        sys.exit(0)
 
 
 if __name__ == "__main__":
