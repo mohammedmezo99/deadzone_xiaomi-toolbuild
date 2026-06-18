@@ -1,0 +1,17 @@
+{
+  "id": "lite_os3_a16_pack",
+  "name": "Lite OS3_A16 Manual Runtime Smali/Resource Pack",
+  "style": "lite",
+  "platform": "OS3_A16",
+  "android": "16",
+  "runtime_uses_mtcr": false,
+  "targets": [
+    "Settings.apk",
+    "MiuiSystemUI.apk"
+  ],
+  "smali_added_classes": 50,
+  "settings_resources": 15,
+  "systemui_resources": 7,
+  "axml_replacements": 1,
+  "arsc_exports": 21
+}

@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <com.android.systemui.newstatusbar.sim.MobileGroup
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:id="@id/mobile_group"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+        <com.android.systemui.statusbar.views.MobileSignalAnimatorImageView
+            android:layout_gravity="center_vertical"
+            android:id="@id/mobile_speech_hd"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/stat_sys_speech_hd"
+            android:adjustViewBounds="true" />
+        <com.android.systemui.newstatusbar.views.AnimatorVisibleColorView
+            android:layout_gravity="center_vertical"
+            android:id="@id/mobile_roaming"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/stat_sys_data_connected_roam"
+            android:adjustViewBounds="true"
+            settingsKey="roam" />
+        <com.android.systemui.newstatusbar.views.AnimatorVisibleColorView
+            android:layout_gravity="center_vertical"
+            android:id="@id/mobile_volte"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/stat_sys_signal_hd_big"
+            android:adjustViewBounds="true"
+            settingsKey="vpn" />
+        <com.android.systemui.statusbar.views.MobileSignalAnimatorImageView
+            android:layout_gravity="center_vertical"
+            android:id="@id/mobile_volte_no_service"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/stat_sys_volte_no_service"
+            android:adjustViewBounds="true" />
+        <com.android.systemui.statusbar.views.MobileSignalAnimatorTextView
+            android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+            android:gravity="center_vertical"
+            android:id="@id/mobile_type_single"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:maxEms="10"
+            android:singleLine="true" />
+        <com.android.systemui.statusbar.views.MobileSignalAnimatorView
+            android:id="@id/mobile_signal_container"
+            android:clipChildren="false"
+            android:clipToPadding="false"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layoutDirection="ltr"
+            app:layout_constraintEnd_toEndOf="parent">
+            <com.android.systemui.newstatusbar.sim.SimTypeContainer
+                android:layout_gravity="center_vertical"
+                android:id="@id/mobile_container_left"
+                android:visibility="gone"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toStartOf="@id/mobile_signal"
+                app:layout_constraintTop_toTopOf="@id/mobile_signal">
+                <com.android.systemui.newstatusbar.sim.MobileTypeImageView
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center|end|top"
+                    android:id="@id/mobile_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleType="fitCenter" />
+                <com.android.systemui.newstatusbar.sim.SimInOutView
+                    android:id="@id/mobile_left_mobile_inout"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true" />
+            </com.android.systemui.newstatusbar.sim.SimTypeContainer>
+            <com.android.systemui.statusbar.AlphaOptimizedImageView
+                android:id="@id/mobile_special_5G"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/signal_5g_off"
+                android:adjustViewBounds="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <com.android.systemui.statusbar.AlphaOptimizedImageView
+                android:id="@id/mobile_satellite"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/stat_sys_satellite_disconnected"
+                android:adjustViewBounds="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <com.android.systemui.statusbar.AlphaOptimizedImageView
+                android:id="@id/mobile_small_roam"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@drawable/stat_sys_data_connected_roam_small"
+                android:adjustViewBounds="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+            <com.android.systemui.newstatusbar.sim.SimIcon
+                android:id="@id/mobile_signal"
+                android:layout_width="@dimen/status_bar_icon_height"
+                android:layout_height="@dimen/status_bar_icon_height"
+                android:adjustViewBounds="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </com.android.systemui.statusbar.views.MobileSignalAnimatorView>
+        <com.android.systemui.newstatusbar.views.AnimatorVisibleColorView
+            android:id="@id/mobile_vowifi"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            settingsKey="vowifi" />
+    </com.android.systemui.newstatusbar.sim.MobileGroup>
+</merge>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.newstatusbar.MiuiPhoneStatusBarView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@id/status_bar"
+    android:focusable="false"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:descendantFocusability="afterDescendants"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/status_bar_height">
+    <LinearLayout
+        android:gravity="center|start"
+        android:layout_gravity="center|end"
+        android:orientation="horizontal"
+        android:id="@id/privacy_area"
+        android:paddingTop="@dimen/status_bar_padding_top"
+        android:paddingBottom="@dimen/status_bar_padding_bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingStart="@dimen/privacy_dot_padding_start"
+        android:layout_marginEnd="@dimen/status_bar_padding_end">
+        <LinearLayout
+            android:orientation="horizontal"
+            android:id="@id/privacy_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <FrameLayout
+        android:orientation="vertical"
+        android:id="@id/status_bar_icons"
+        android:focusable="false"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:descendantFocusability="afterDescendants"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.android.systemui.statusbar.views.BatteryIndicator
+            android:id="@id/battery_indicator"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/battery_line_height"
+            android:src="@drawable/battery_indicator" />
+        <com.android.systemui.statusbar.phone.MyModifiedUI.LightningAnimationLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+        <com.android.systemui.newstatusbar.layouts.MainLayout
+            android:orientation="horizontal"
+            android:id="@id/status_bar_contents"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true">
+            <com.android.systemui.newstatusbar.layouts.TransferMobileLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_net1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.TransferMobileLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_net2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.TransferMobileLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_wifi"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.TransferMobileLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_speed"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.ClockLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_clock"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.SingleLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/fullscreen_notification_icon_area"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.WeatherLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_weather"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.DateLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_date"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.BatteryLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_bat"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.StatusLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_status"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+            <com.android.systemui.newstatusbar.layouts.PromptLayout
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:id="@id/elem_prompt"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" />
+        </com.android.systemui.newstatusbar.layouts.MainLayout>
+        <LinearLayout
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:id="@id/focused_parent"
+            android:paddingTop="@dimen/status_bar_padding_top"
+            android:paddingBottom="@dimen/status_bar_padding_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingStart="@dimen/status_bar_padding_start"
+            android:paddingEnd="@dimen/status_bar_padding_end">
+            <View
+                android:id="@id/focused_notifi_start"
+                android:background="@color/transparent"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/status_bar_padding_extra_start" />
+            <com.android.systemui.statusbar.phone.DividerLine
+                android:layout_gravity="center_vertical"
+                android:id="@id/view_line"
+                android:visibility="gone"
+                android:layout_width="@dimen/line_width"
+                android:layout_height="@dimen/line_height"
+                android:layout_marginStart="@dimen/status_bar_notification_padding_end" />
+            <com.android.systemui.statusbar.phone.FocusedNotifPromptView
+                android:gravity="center_vertical"
+                android:layout_gravity="center|start"
+                android:orientation="horizontal"
+                android:id="@id/focused_notif_view"
+                android:visibility="gone"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:importantForAccessibility="no"
+                android:paddingStart="@dimen/focused_notif_view_padding_start">
+                <com.android.systemui.statusbar.phone.FocusedNotifPromptImageView
+                    android:id="@id/focused_notif_icon"
+                    android:layout_width="@dimen/focused_notif_icon_size"
+                    android:layout_height="@dimen/focused_notif_icon_size"
+                    android:scaleType="centerInside"
+                    android:importantForAccessibility="no" />
+                <FrameLayout
+                    android:id="@id/focused_notif_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/focused_notif_content_start">
+                    <com.android.systemui.statusbar.widget.FocusedTextView
+                        android:textAppearance="@style/TextAppearance.StatusBar.Clock"
+                        android:ellipsize="marquee"
+                        android:id="@id/focused_notif_content_text"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:marqueeRepeatLimit="1"
+                        android:fontFamily="MiSans-normal"
+                        android:paddingEnd="8dp" />
+                    <com.android.systemui.statusbar.views.LimitedSizeFrameLayout
+                        android:id="@id/focused_notif_content_remote"
+                        android:visibility="gone"
+                        android:clipChildren="false"
+                        android:clipToPadding="false"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:MiuiMaxWidth="@dimen/status_bar_prompt_max_width" />
+                </FrameLayout>
+            </com.android.systemui.statusbar.phone.FocusedNotifPromptView>
+        </LinearLayout>
+    </FrameLayout>
+    <com.android.systemui.statusbar.policy.BatteryBarController
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        app:viewLocation="0" />
+</com.android.systemui.newstatusbar.MiuiPhoneStatusBarView>

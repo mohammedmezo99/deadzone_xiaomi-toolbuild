@@ -2,6 +2,18 @@ baserom="$1"
 work_dir=$(pwd)
 source $work_dir/functions.sh
 
+normalize_project_version() {
+    local version_value="$1"
+    version_value="${version_value//$'\r'/}"
+    version_value="${version_value//$'\n'/}"
+    [ -n "$version_value" ] || return 1
+    if [[ "$version_value" == v* ]]; then
+        printf '%s\n' "$version_value"
+    else
+        printf 'v%s\n' "$version_value"
+    fi
+}
+
 regionTYPE=$(cat $work_dir/bin/ddevice/device_type.txt)
 AndroidVer=$(< $work_dir/build/baserom/images/system/system/build.prop grep "ro.system.build.version.release" |awk 'NR==1' |cut -d '=' -f 2)
 sdkLevel=$(< $work_dir/build/baserom/images/system/system/build.prop grep "ro.system.build.version.sdk" |awk 'NR==1' |cut -d '=' -f 2)
@@ -9,7 +21,7 @@ device_code=$(cat $work_dir/bin/ddevice/device_code.txt)
 name=$(cat $work_dir/bin/ddevice/name_devices.txt)
 base_rom_code=$(cat $work_dir/bin/ddevice/base_rom_code.txt)
 rom_os=$(cat $work_dir/bin/ddevice/rom_os.txt)
-starxVER=$(cat $work_dir/Version)
+starxVER=$(normalize_project_version "$(cat "$work_dir/Version" 2>/dev/null)")
 systemtype=$(cat $work_dir/bin/ddevice/fstype.txt)
 
 if grep -q "ro.build.ab_update=true" build/baserom/images/vendor/build.prop; then

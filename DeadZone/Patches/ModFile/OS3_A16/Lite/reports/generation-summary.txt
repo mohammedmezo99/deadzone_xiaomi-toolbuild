@@ -1,0 +1,90 @@
+Lite OS3_A16 manual runtime pack generation summary
+source: Lite(1).zip
+runtime path: DeadZone/Patches/ModFile/OS3_A16/Lite/
+reference files inspected: 5
+Settings smali classes converted/injected: 50
+Settings resources converted/copied: 15
+MiuiSystemUI resources converted/copied: 7
+Settings AXML replacements converted: 1
+Settings ARSC readable exports converted: 21
+runtime_uses_mtcr: false
+mtcr_files_in_pack: 0
+blockers: 0
+
+Settings smali classes:
+- androidx/preference/XMiuiCheckBoxPreference.smali
+- androidx/preference/XMiuiPreferenceHelper.smali
+- com/android/settings/MezoDevelopmentDetails.smali
+- com/android/settings/MyMezoSettings.smali
+- mobx/settings/overlay/icon/ThemeUtils$$ExternalSyntheticLambda0.smali
+- mobx/settings/overlay/icon/ThemeUtils$$ExternalSyntheticLambda1.smali
+- mobx/settings/overlay/icon/ThemeUtils$$ExternalSyntheticLambda2.smali
+- mobx/settings/overlay/icon/ThemeUtils.smali
+- mobx/settings/overlay/icon/battery/BatteryIcons$Adapter$100000000.smali
+- mobx/settings/overlay/icon/battery/BatteryIcons$Adapter$ViewHolder.smali
+- mobx/settings/overlay/icon/battery/BatteryIcons$Adapter.smali
+- mobx/settings/overlay/icon/battery/BatteryIcons$Function.smali
+- mobx/settings/overlay/icon/battery/BatteryIcons$Predicate.smali
+- mobx/settings/overlay/icon/battery/BatteryIcons.smali
+- mobx/settings/overlay/icon/fod/fodIcons$Adapter$100000000.smali
+- mobx/settings/overlay/icon/fod/fodIcons$Adapter$ViewHolder.smali
+- mobx/settings/overlay/icon/fod/fodIcons$Adapter.smali
+- mobx/settings/overlay/icon/fod/fodIcons$Function.smali
+- mobx/settings/overlay/icon/fod/fodIcons$Predicate.smali
+- mobx/settings/overlay/icon/fod/fodIcons.smali
+- mobx/settings/overlay/icon/navigation/NavigationIcons$Adapter$100000000.smali
+- mobx/settings/overlay/icon/navigation/NavigationIcons$Adapter$ViewHolder.smali
+- mobx/settings/overlay/icon/navigation/NavigationIcons$Adapter.smali
+- mobx/settings/overlay/icon/navigation/NavigationIcons$Function.smali
+- mobx/settings/overlay/icon/navigation/NavigationIcons$Predicate.smali
+- mobx/settings/overlay/icon/navigation/NavigationIcons.smali
+- mobx/settings/overlay/icon/signal/SignalIcons$Adapter$100000000.smali
+- mobx/settings/overlay/icon/signal/SignalIcons$Adapter$ViewHolder.smali
+- mobx/settings/overlay/icon/signal/SignalIcons$Adapter.smali
+- mobx/settings/overlay/icon/signal/SignalIcons$Function.smali
+- mobx/settings/overlay/icon/signal/SignalIcons$Predicate.smali
+- mobx/settings/overlay/icon/signal/SignalIcons.smali
+- mobx/settings/overlay/icon/volte/VolteIcons$Adapter$100000000.smali
+- mobx/settings/overlay/icon/volte/VolteIcons$Adapter$ViewHolder.smali
+- mobx/settings/overlay/icon/volte/VolteIcons$Adapter.smali
+- mobx/settings/overlay/icon/volte/VolteIcons$Function.smali
+- mobx/settings/overlay/icon/volte/VolteIcons$Predicate.smali
+- mobx/settings/overlay/icon/volte/VolteIcons.smali
+- mobx/settings/overlay/icon/vowifi/VowifiIcons$Adapter$100000000.smali
+- mobx/settings/overlay/icon/vowifi/VowifiIcons$Adapter$ViewHolder.smali
+- mobx/settings/overlay/icon/vowifi/VowifiIcons$Adapter.smali
+- mobx/settings/overlay/icon/vowifi/VowifiIcons$Function.smali
+- mobx/settings/overlay/icon/vowifi/VowifiIcons$Predicate.smali
+- mobx/settings/overlay/icon/vowifi/VowifiIcons.smali
+- mobx/settings/overlay/icon/wifi/WifiIcons$Adapter$100000000.smali
+- mobx/settings/overlay/icon/wifi/WifiIcons$Adapter$ViewHolder.smali
+- mobx/settings/overlay/icon/wifi/WifiIcons$Adapter.smali
+- mobx/settings/overlay/icon/wifi/WifiIcons$Function.smali
+- mobx/settings/overlay/icon/wifi/WifiIcons$Predicate.smali
+- mobx/settings/overlay/icon/wifi/WifiIcons.smali
+
+Settings resources:
+- color/option_border_color.xml
+- color/option_grid_icon_color.xml
+- drawable/icon_background.xml
+- drawable/icon_background1.xml
+- drawable/option_border_custom.xml
+- drawable/option_border_edge_custom.xml
+- layout/icon_option_battery.xml
+- layout/icon_option_fod.xml
+- layout/icon_option_nav.xml
+- layout/icon_option_vowifi.xml
+- layout/icon_option_wifi.xml
+- layout/item_view.xml
+- xml/account_settings_details.xml
+- xml/mezo_settings.xml
+- xml/settings_headers.xml
+
+MiuiSystemUI resources:
+- drawable-night/battery_style.png
+- drawable-nodpi/ic_signal_cellular_0_5_bar.xml
+- drawable-nodpi/ic_signal_cellular_1_5_bar.xml
+- drawable-nodpi/ic_signal_cellular_3_5_bar.xml
+- drawable-nodpi/ic_signal_cellular_5_5_bar.xml
+- drawable-nodpi/volte_style_img.xml
+- drawable/battery_style.png

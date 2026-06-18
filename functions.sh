@@ -4,6 +4,7 @@ WORK_DIR=$(pwd)
 mods() {
     if [ "$#" -eq 1 ] ; then
         echo -e [MODS] - $1
+        notify_activity "Applying mods: $1"
     else
         echo "Usage: mods <string>"
     fi
@@ -12,6 +13,7 @@ mods() {
 info() {
     if [ "$#" -eq 1 ] ; then
         echo -e [INFO] - $1
+        notify_activity "$1"
     else
         echo "Usage: info <string>"
     fi
@@ -20,6 +22,7 @@ info() {
 warn() {
     if [ "$#" -eq 1 ] ; then
         echo -e [WARN] - $1
+        notify_activity "Warning: $1"
     else
         echo "Usage: warn <string>"
     fi
@@ -28,6 +31,7 @@ warn() {
 error() {
     if [ "$#" -eq 1 ] ; then
         echo -e [ERROR] - $1
+        notify_activity "Error: $1"
     else
         echo "Usage: error <string>"
     fi
@@ -36,6 +40,7 @@ error() {
 unpack() {
     if [ "$#" -eq 1 ] ; then
         echo -e [UNPACK] - $1
+        notify_activity "$1"
     else
         echo "Usage: unpack <string>"
     fi
@@ -60,6 +65,7 @@ unpack_ext() {
 repack() {
     if [ "$#" -eq 1 ] ; then
         echo -e [REPACK] - $1
+        notify_activity "$1"
     else
         echo "Usage: repack <string>"
     fi
@@ -68,6 +74,7 @@ repack() {
 upload() {
     if [ "$#" -eq 1 ] ; then
         echo -e [UPLOADING] - $1
+        notify_activity "$1"
     else
         echo "Usage: upload <string>"
     fi
@@ -76,9 +83,30 @@ upload() {
 patch() {
     if [ "$#" -eq 1 ] ; then
         echo -e [PATCH] - $1
+        notify_activity "$1"
     else
         echo "Usage: patch <string>"
     fi
+}
+
+notify_activity() {
+    local message="${1:-}"
+    local notify_script=""
+    [ -n "$message" ] || return 0
+
+    if [ -n "${WORK_DIR:-}" ] && [ -f "${WORK_DIR}/notify.py" ]; then
+        notify_script="${WORK_DIR}/notify.py"
+    elif [ -f "$(pwd)/notify.py" ]; then
+        notify_script="$(pwd)/notify.py"
+    else
+        return 0
+    fi
+
+    if [ -z "${DZ_NOTIFY_REPO_NAME:-}" ] || [ -z "${DZ_NOTIFY_ROM_LINK:-}" ]; then
+        return 0
+    fi
+
+    python3 "$notify_script" activity "$message" "${DZ_NOTIFY_REPO_NAME}" "${DZ_NOTIFY_ROM_LINK}" "${DZ_NOTIFY_PREFIX:-xiaomi}" "${DZ_NOTIFY_BUILDER_NAME:-}" "${DZ_NOTIFY_BUILDER_ID:-}" >/dev/null 2>&1 || true
 }
 
 # Check for required dependencies

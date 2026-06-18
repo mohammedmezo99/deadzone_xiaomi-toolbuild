@@ -1,0 +1,69 @@
+{
+  "id": "ninja_os3_a16_pack",
+  "name": "Ninja OS3_A16 Exclusive Smali Runtime Pack",
+  "style_only": "ninja",
+  "platform_only": "OS3_A16",
+  "android_only": "16",
+  "runtime_uses_mtcr": false,
+  "description": "Generated manual runtime pack. Uses generated smali/resource files, not comparison .mtcr at runtime.",
+  "counts": {
+    "reference_files_inspected": [
+      "Ninja/system/framework/Framework_Legend.mtcr",
+      "Ninja/system/framework/Service_Legend.mtcr",
+      "Ninja/system_ext/framework/miui-framework_Legend.mtcr",
+      "Ninja/system_ext/framework/miui-services_Legend.mtcr",
+      "Ninja/system_ext/app/PowerKeeper/PowerKeeper.apk_dex.mtcr",
+      "Ninja/system_ext/priv-app/string/classes.mtcr",
+      "Ninja/system_ext/priv-app/smali/smali.zip",
+      "Ninja/system_ext/priv-app/res/",
+      "Ninja/system_ext/priv-app/string/axml.mtcr",
+      "Ninja/system_ext/priv-app/string/arsc.zip"
+    ],
+    "modules": {
+      "framework": {
+        "target": "system/framework/framework.jar",
+        "modified": 2,
+        "added": 16,
+        "functions": 18
+      },
+      "services": {
+        "target": "system/framework/services.jar",
+        "modified": 8,
+        "added": 3,
+        "functions": 11
+      },
+      "miui_framework": {
+        "target": "system_ext/framework/miui-framework.jar",
+        "modified": 1,
+        "added": 12,
+        "functions": 13
+      },
+      "miui_services": {
+        "target": "system_ext/framework/miui-services.jar",
+        "modified": 8,
+        "added": 0,
+        "functions": 8
+      },
+      "powerkeeper": {
+        "target": "system_ext/app/PowerKeeper/PowerKeeper.apk",
+        "modified": 17,
+        "added": 0,
+        "functions": 17
+      },
+      "systemui": {
+        "target": "system_ext/priv-app/MiuiSystemUI/MiuiSystemUI.apk",
+        "modified": 114,
+        "added": 313,
+        "functions": 427,
+        "smali_zip_extra_added": 2
+      }
+    },
+    "total_modified": 150,
+    "total_added": 346,
+    "total_templates": 496,
+    "resources_raw": 541,
+    "resources_axml": 20,
+    "resources_values_from_arsc": 224,
+    "blockers": []
+  }
+}

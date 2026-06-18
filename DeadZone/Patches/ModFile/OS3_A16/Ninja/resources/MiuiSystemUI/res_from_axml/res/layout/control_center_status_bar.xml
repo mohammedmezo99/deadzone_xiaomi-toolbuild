@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.android.systemui.controlcenter.phone.widget.ControlCenterStatusBarIcon xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:id="@id/control_center_status_bar"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.android.systemui.newstatusbar.layouts.ControlCenterStatusBar
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:id="@id/status_bar_area"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <include
+            android:layout_gravity="end"
+            android:id="@id/system_icons"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            layout="@layout/system_icons" />
+    </com.android.systemui.newstatusbar.layouts.ControlCenterStatusBar>
+</com.android.systemui.controlcenter.phone.widget.ControlCenterStatusBarIcon>

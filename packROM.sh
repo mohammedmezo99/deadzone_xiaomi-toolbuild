@@ -1,4 +1,6 @@
 work_dir=$(pwd)
+export WORK_DIR="$work_dir"
+export DZ_NOTIFY_STAGE="pack"
 source $work_dir/functions.sh
 tools_dir=${work_dir}/bin/$(uname)/$(uname -m)export PATH=$(pwd)/bin/$(uname)/$(uname -m)/:$PATH
 super_list="vendor mi_ext odm odm_dlkm system system_dlkm vendor_dlkm product product_dlkm system_ext"
@@ -11,12 +13,24 @@ device_code=$(cat $work_dir/bin/ddevice/device_f.txt)
 getvar=$(cat $work_dir/bin/ddevice/device_f.txt)
 PACK_TYPE=$(cat $work_dir/bin/ddevice/fstype.txt)
 
+normalize_project_version() {
+    local version_value="$1"
+    version_value="${version_value//$'\r'/}"
+    version_value="${version_value//$'\n'/}"
+    [ -n "$version_value" ] || return 1
+    if [[ "$version_value" == v* ]]; then
+        printf '%s\n' "$version_value"
+    else
+        printf 'v%s\n' "$version_value"
+    fi
+}
+
 
 if [[ $(git branch --show-current) == "beta" ]]; then
-    polyxver="$(cat Version)"
+    polyxver="$(normalize_project_version "$(cat Version 2>/dev/null)")"
 	status="Development"
 else
-    polyxver="$(cat Version)"
+    polyxver="$(normalize_project_version "$(cat Version 2>/dev/null)")"
 	status="Official"
 fi
 

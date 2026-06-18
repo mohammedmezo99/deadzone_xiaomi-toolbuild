@@ -4,16 +4,120 @@ prefix_id="$3"
 builder_name="$4"
 builder_id="$5"
 work_dir=$(pwd)
+export WORK_DIR="$work_dir"
+export DZ_NOTIFY_REPO_NAME="$repo_name"
+export DZ_NOTIFY_ROM_LINK="$baserom"
+export DZ_NOTIFY_PREFIX="$prefix_id"
+export DZ_NOTIFY_BUILDER_NAME="$builder_name"
+export DZ_NOTIFY_BUILDER_ID="$builder_id"
+source "$work_dir/bin/ddevice/style.sh"
+raw_style="${STYLE:-${DZ_STYLE_ID:-${INPUT_STYLE:-Lite}}}"
+style_id="$(normalize_style_id "$raw_style")"
+style_name="$(style_display_name "$style_id")"
+style_zip_name="$(style_zip_prefix "$style_id")"
+style_tier="$(style_tier_name "$style_id")"
+export STYLE="$style_id"
+export DZ_STYLE="$style_id"
+export DZ_STYLE_ID="$style_id"
+export DZ_FINAL_STYLE_ID="$style_id"
+export DZ_REQUESTED_STYLE="$style_id"
+export DZ_BASE_STYLE_ID=""
+export DZ_STYLE_EXECUTION_MODE="final"
+export DZ_STYLE_NAME="$style_name"
+export DZ_STYLE_TIER="$style_tier"
+mkdir -p "$work_dir/bin/ddevice"
+printf '%s\n' "$style_id" > "$work_dir/bin/ddevice/style_id.txt"
+printf '%s\n' "$style_name" > "$work_dir/bin/ddevice/style_name.txt"
+printf '%s\n' "$style_zip_name" > "$work_dir/bin/ddevice/style_zip_prefix.txt"
+
+normalize_project_version() {
+    local version_value="$1"
+    version_value="${version_value//$'\r'/}"
+    version_value="${version_value//$'\n'/}"
+    [ -n "$version_value" ] || return 1
+    if [[ "$version_value" == v* ]]; then
+        printf '%s\n' "$version_value"
+    else
+        printf 'v%s\n' "$version_value"
+    fi
+}
+
+detect_platform_id() {
+    local rom_code="$1"
+    local android_major="$2"
+    local upper_code="${rom_code^^}"
+    local family=""
+
+    if [[ "$upper_code" == OS3.* ]]; then
+        family="OS3"
+    elif [[ "$upper_code" == OS2.* ]]; then
+        family="OS2"
+    elif [[ "$upper_code" == V* ]]; then
+        family="OS1"
+    fi
+
+    if [[ -n "$family" && -n "$android_major" ]]; then
+        printf '%s_A%s\n' "$family" "$android_major"
+    fi
+}
+
+apply_deadzone_style_runtime() {
+    local platform_id="$1"
+    local rom_root="$2"
+
+    export DZ_PLATFORM_ID="$platform_id"
+    export PLATFORM_ID="$platform_id"
+    export PLATFORM="$platform_id"
+    export ROM_PLATFORM="$platform_id"
+    export DZ_ROM_ROOT="$rom_root"
+    export ROM_ROOT="$rom_root"
+    export EXTRACTED_ROM_DIR="$rom_root"
+    export ANDROID_VERSION="$(cat "$work_dir/bin/ddevice/androidver.txt" 2>/dev/null)"
+    export DZ_ANDROID_VERSION="$ANDROID_VERSION"
+    export SDK_VERSION="$(cat "$work_dir/bin/ddevice/sdkLevel.txt" 2>/dev/null)"
+    export ANDROID_SDK="$SDK_VERSION"
+
+    case "$style_id" in
+        lite)
+            if [[ "$platform_id" == "OS3_A16" ]]; then
+                mods "Applying Lite OS3_A16 manual runtime pack."
+                bash "$work_dir/DeadZone/Patches/ModFile/OS3_A16/Lite/insmod.sh" "$rom_root" || {
+                    error "Lite OS3_A16 manual runtime pack failed."
+                    exit 1
+                }
+            else
+                info "Lite manual runtime pack is not required for ${platform_id:-unknown platform}."
+            fi
+            ;;
+        gamingplus)
+            info "GamingPlus follows the official Build inheritance path: Lite base runtime only."
+            ;;
+        legend)
+            info "Legend follows the official Build inheritance path: GamingPlus -> Lite base runtime only."
+            ;;
+        ninja)
+            if [[ "$platform_id" == "OS3_A16" ]]; then
+                mods "Applying Ninja OS3_A16 manual runtime pack."
+                bash "$work_dir/DeadZone/Patches/ModFile/OS3_A16/Ninja/insmod.sh" "$rom_root" || {
+                    error "Ninja OS3_A16 manual runtime pack failed."
+                    exit 1
+                }
+            else
+                info "Ninja OS3_A16 manual runtime pack is not applicable for ${platform_id:-unknown platform}."
+            fi
+            ;;
+    esac
+}
 # Import functions
 tools_dir=${work_dir}/bin/$(uname)/$(uname -m)export PATH=$(pwd)/bin/$(uname)/$(uname -m)/:$PATH
 chmod 777 ${work_dir}/bin/*
 chmod 777 ${work_dir}/bin/Linux/x86_64/*
 source $work_dir/functions.sh
 if [[ $(git branch --show-current) == "beta" ]]; then
-    polyxver="$(cat Version)"
+    polyxver="$(normalize_project_version "$(cat Version 2>/dev/null)")"
 	status="Development"
 else
-    polyxver="$(cat Version)"
+    polyxver="$(normalize_project_version "$(cat Version 2>/dev/null)")"
 	status="Official"
 fi
 
@@ -22,9 +126,11 @@ check unzip aria2c 7z zip java zipalign python3 zstd bc xmlstarlet aapt
 rm -rf $work_dir/out
 rm -rf $work_dir/build
 
+export DZ_NOTIFY_STAGE="download"
 python3 $work_dir/notify.py download "$repo_name" "$baserom" "$prefix_id" "$builder_name" "$builder_id"
 source "$work_dir/bin/ddevice/getROM.sh" "$baserom"
 
+export DZ_NOTIFY_STAGE="unpack"
 python3 $work_dir/notify.py unpack "$repo_name" "$baserom" "$prefix_id" "$builder_name" "$builder_id"
 if unzip -l ${baserom} | grep -q "payload.bin"; then
     baserom_type="payload"
@@ -124,18 +230,23 @@ rm -rf build/baserom/images/super.img
 mods "Collecting device information."
 bash $work_dir/bin/ddevice/getname.sh $getvar
 bash $work_dir/bin/ddevice/fetchINFO.sh
+platform_id="$(detect_platform_id "$(cat "$work_dir/bin/ddevice/base_rom_code.txt" 2>/dev/null)" "$(cat "$work_dir/bin/ddevice/androidver.txt" 2>/dev/null)")"
+printf '%s\n' "$platform_id" > "$work_dir/bin/ddevice/platform_id.txt"
 
 # Send the build notification after codename and version are available.
+export DZ_NOTIFY_STAGE="build"
 python3 $work_dir/notify.py build "$repo_name" "$baserom" "$prefix_id" "$builder_name" "$builder_id"
 
 bash $work_dir/bin/ddevice/DEBLOAT/debloat.sh
 info "ROM patch stage completed."
 
+mods "Applying ${style_name} style routing."
 bash $work_dir/bin/modfile/OS1/insmod.sh
 bash $work_dir/bin/modfile/OS2/insmod.sh
 bash $work_dir/bin/modfile/OS3/insmod.sh
 bash $work_dir/bin/modfile/Universal/insfile.sh
 bash $work_dir/bin/modfile/UpdateFile/insupdate.sh
 bash $work_dir/bin/package/patchpackage.sh
+apply_deadzone_style_runtime "$platform_id" "$work_dir/build/baserom/images"
 
 find "$work_dir/build/baserom/images/" -exec touch -t 200901010000.00 {} + 2> /dev/null || true

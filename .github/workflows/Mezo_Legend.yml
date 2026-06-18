@@ -1,0 +1,31 @@
+name: "⚡ Mezo Legend"
+
+on:
+  workflow_dispatch:
+    inputs:
+      rom_url:
+        description: "Direct URL to the Xiaomi firmware package"
+        required: true
+        type: string
+      builder_name:
+        description: "Optional builder display name for notifications"
+        required: false
+        type: string
+      builder_id:
+        description: "Optional Telegram user ID for direct build updates"
+        required: false
+        type: string
+
+concurrency:
+  group: mezo-legend-build
+  cancel-in-progress: false
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+    with:
+      rom_url: ${{ inputs.rom_url }}
+      style: Legend
+      builder_name: ${{ inputs.builder_name }}
+      builder_id: ${{ inputs.builder_id }}
+    secrets: inherit

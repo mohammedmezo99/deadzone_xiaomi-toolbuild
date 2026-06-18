@@ -1,0 +1,21 @@
+.class public interface abstract Lcom/android/systemui/newstatusbar/controllers/IconController$IconCallBack;
+.super Ljava/lang/Object;
+
+# interfaces
+.implements Lcom/android/systemui/plugins/controllers/ControllerExt$CallBack;
+
+
+# annotations
+.annotation system Ldalvik/annotation/EnclosingClass;
+    value = Lcom/android/systemui/newstatusbar/controllers/IconController;
+.end annotation
+
+.annotation system Ldalvik/annotation/InnerClass;
+    accessFlags = 0x609
+    name = "IconCallBack"
+.end annotation
+
+
+# virtual methods
+.method public abstract onIconChange()V
+.end method

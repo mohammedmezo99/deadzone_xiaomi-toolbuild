@@ -1,0 +1,27 @@
+Ninja OS3_A16 manual pack generation summary
+Reference files inspected: 10
+- Ninja/system/framework/Framework_Legend.mtcr
+- Ninja/system/framework/Service_Legend.mtcr
+- Ninja/system_ext/framework/miui-framework_Legend.mtcr
+- Ninja/system_ext/framework/miui-services_Legend.mtcr
+- Ninja/system_ext/app/PowerKeeper/PowerKeeper.apk_dex.mtcr
+- Ninja/system_ext/priv-app/string/classes.mtcr
+- Ninja/system_ext/priv-app/smali/smali.zip
+- Ninja/system_ext/priv-app/res/
+- Ninja/system_ext/priv-app/string/axml.mtcr
+- Ninja/system_ext/priv-app/string/arsc.zip
+
+Modified classes: 150
+Added classes: 346
+Generated smali templates/functions: 496
+Raw MiuiSystemUI resources copied: 541
+AXML resources converted: 20
+ARSC value exports converted: 224
+Blockers: 0
+
+[framework] target=system/framework/framework.jar modified=2 added=16 functions=18 extra=0
+[services] target=system/framework/services.jar modified=8 added=3 functions=11 extra=0
+[miui_framework] target=system_ext/framework/miui-framework.jar modified=1 added=12 functions=13 extra=0
+[miui_services] target=system_ext/framework/miui-services.jar modified=8 added=0 functions=8 extra=0
+[powerkeeper] target=system_ext/app/PowerKeeper/PowerKeeper.apk modified=17 added=0 functions=17 extra=0
+[systemui] target=system_ext/priv-app/MiuiSystemUI/MiuiSystemUI.apk modified=114 added=313 functions=427 extra=2
