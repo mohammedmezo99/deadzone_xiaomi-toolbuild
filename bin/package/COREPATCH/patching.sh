@@ -120,7 +120,7 @@ $method_head_escaped\\
 
 modify_invoke_custom_methods() {
   local decompile_dir="$1"
-  echo "Checking for invoke-custom in $decompile_dir..."
+  echo "🔎 Checking for invoke-custom in $decompile_dir..."
 
   # Use find with + instead of \; to batch files and suppress all grep errors
   local smali_files
@@ -243,14 +243,14 @@ patch_method_in_file() {
 
   # Check if file exists
   if [ ! -f "$file" ]; then
-    echo "⚠ File not found: $(basename "$file")"
+    echo "⚠️ File not found: $(basename "$file")"
     return
   fi
 
   local start
   start=$(grep -n "^[[:space:]]*\.method.* $method" "$file" | cut -d: -f1 | head -n1)
   [ -z "$start" ] && {
-    echo "⚠ Method $method not found in $(basename "$file")"
+    echo "⚠️ Method $method not found in $(basename "$file")"
     return
   }
 
@@ -266,7 +266,7 @@ patch_method_in_file() {
   done
 
   [ "$end" -eq 0 ] && {
-    echo "⚠ End not found for $method"
+    echo "⚠️ End not found for $method"
     return
   }
 
@@ -281,7 +281,7 @@ $method_head_escaped\\
     return v0\\
 .end method" "$file"
 
-  echo "✓ Patched $method to return $ret_val in $(basename "$file")"
+  echo "✅ Patched $method to return $ret_val in $(basename "$file")"
 }
 
 patch_return_void_in_file() {
@@ -290,14 +290,14 @@ patch_return_void_in_file() {
 
   # Check if file exists
   if [ ! -f "$file" ]; then
-    echo "⚠ File not found: $(basename "$file")"
+    echo "⚠️ File not found: $(basename "$file")"
     return
   fi
 
   local start
   start=$(grep -n "^[[:space:]]*\.method.* $method" "$file" | cut -d: -f1 | head -n1)
   [ -z "$start" ] && {
-    echo "⚠ Method $method not found in $(basename "$file")"
+    echo "⚠️ Method $method not found in $(basename "$file")"
     return
   }
 
@@ -313,7 +313,7 @@ patch_return_void_in_file() {
   done
 
   [ "$end" -eq 0 ] && {
-    echo "⚠ Method $method end not found"
+    echo "⚠️ Method $method end not found"
     return
   }
 
@@ -327,7 +327,7 @@ $method_head_escaped\\
     return-void\\
 .end method" "$file"
 
-  echo "✓ Patched $method → return-void in $(basename "$file")"
+  echo "✅ Patched $method -> return-void in $(basename "$file")"
 }
 
 patch_smali_method_in_file() {
@@ -383,7 +383,7 @@ $line" "$file"
     inject_line=$((inject_line + 1))
   done <<< "$inject_code"
 
-  echo "✓ Injected code into $method in $(basename "$file")"
+  echo "✅ Injected code into $method in $(basename "$file")"
 }
 
 replace_line_contains_in_smali_method() {
@@ -437,7 +437,7 @@ replace_line_contains_in_smali_method() {
   sed -i "${real_line}c\\
 $replace_line" "$file"
 
-  echo "✓ Replaced line containing '$keyword' in $method ($(basename "$file"))"
+  echo "✅ Replaced line containing '$keyword' in $method ($(basename "$file"))"
 }
 
 patch_smali_after_keyword() {
@@ -497,7 +497,7 @@ $line" "$file"
     inject_line=$((inject_line + 1))
   done <<< "$inject_code"
 
-  echo "✓ Injected after '$keyword' in $method ($(basename "$file"))"
+  echo "✅ Injected after '$keyword' in $method ($(basename "$file"))"
 }
 
 delete_lines_in_smali_method() {
@@ -555,5 +555,5 @@ delete_lines_in_smali_method() {
   # Delete the selected lines.
   sed -i "${real_start},${real_end}d" "$file"
 
-  echo "✓ Deleted lines $from_line → $to_line inside $method in $(basename "$file")"
+  echo "✅ Deleted lines $from_line -> $to_line inside $method in $(basename "$file")"
 }

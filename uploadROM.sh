@@ -13,7 +13,7 @@ device_f=$(cat $work_dir/bin/ddevice/device_f.txt)
 
 if [ "$1" == "setup" ]; then
   if [ -z "$2" ] || [ -z "$3" ] || [ -z "$4" ]; then
-    echo "[ERROR] - Please provide rclone token and remote name"
+    echo "[ERROR] - Missing required setup arguments for rclone configuration."
     exit 1
   fi
   curl  -s -o $work_dir/rclone.conf \
@@ -38,10 +38,10 @@ else
     os_type="HyperOS"
 fi
 
-repack "Compressing super.img"
+repack "Compressing super.img."
 zstd --rm $work_dir/build/baserom/images/super.img -o $work_dir/build/baserom/images/super.img.zst > /dev/null 2>&1
 
-repack "Generating flashing script"
+repack "Generating the flashing package layout."
 if [[ ${baserom_type} == 'payload' ]]; then
     mkdir -p $work_dir/out/${os_type}_${device_code}_${base_rom_code}/images/
 	mv -f $work_dir/build/baserom/images/super.img.zst $work_dir/out/${os_type}_${device_code}_${base_rom_code}/
@@ -58,7 +58,7 @@ cp -rf $work_dir/bin/script2flash/*.bat $work_dir/out/${os_type}_${device_code}_
 cp -rf $work_dir/bin/script2flash/*.sh $work_dir/out/${os_type}_${device_code}_${base_rom_code}/
 cp -rf $work_dir/bin/script2flash/cust.img $work_dir/out/${os_type}_${device_code}_${base_rom_code}/images/
 echo $device_f > $work_dir/out/${os_type}_${device_code}_${base_rom_code}/META-INF/Data/DeviceCode
-repack "Done"
+repack "Flash package layout generated."
 
 
 find out/${os_type}_${device_code}_${base_rom_code} |xargs touch
@@ -68,10 +68,10 @@ mv ${os_type}_${device_code}_${base_rom_code}.zip ../
 popd || exit
 hash=$(md5sum out/${os_type}_${device_code}_${base_rom_code}.zip |head -c 5)
 mv out/${os_type}_${device_code}_${base_rom_code}.zip out/${os_type}_${polyxver}_${device_code}_${base_rom_code}_${hash}_${status}.zip
-repack "Build completed"
-repack "Output: "
+repack "ROM package completed."
+repack "Output file:"
 repack "$(pwd)/out/${os_type}_${polyxver}_${device_code}_${base_rom_code}_${hash}_${status}.zip"
-upload "Uploading"
+upload "Starting cloud upload."
 output_file="out/${os_type}_${polyxver}_${device_code}_${base_rom_code}_${hash}_${status}.zip"
 echo "${os_type}_${polyxver}_${device_code}_${base_rom_code}_${hash}_${status}.zip" > $work_dir/bin/ddevice/output_zip.txt
 
@@ -84,18 +84,18 @@ fi
 # 1drive
 if [[ $rom_os == "MIUI" ]]; then
     rclone -v --config="$RCLONE_CONFIG_1DRIVE" copy "$output_file" "$ONEDRIVE_REMOTE:NTBuild/${uploaddir}/${polyxver}/${device_code}/" || {
-        upload "Error uploading file to OneDrive: $FILENAME"
+        upload "Cloud upload failed for the generated ROM package."
         exit 1
     }
 else
     rclone -v --config="$RCLONE_CONFIG_1DRIVE" copy "$output_file" "$ONEDRIVE_REMOTE:NTBuild/${uploaddir}/${polyxver}/${device_code}/" || {
-        upload "Error uploading file to OneDrive: $FILENAME"
+        upload "Cloud upload failed for the generated ROM package."
         exit 1
     }
 fi
 
-upload "Clean Workflow.."
+upload "Cleaning workflow workspace."
 rm -rf $work_dir/out
 rm -rf $work_dir/build
 
-upload "Build ${os_type}_${polyxver} for ${device_code} was successful."
+upload "Upload completed for ${os_type}_${polyxver} on ${device_code}."

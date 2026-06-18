@@ -15,3 +15,4 @@ fi
 
 VALUE=$(jq -r --arg key "$EXACT_KEY" '.[$key] // "Key not found"' "$FILE_JSON")
 echo "$VALUE" > $work_dir/bin/ddevice/name_devices.txt
+info "Resolved device name for key: $EXACT_KEY"

@@ -1,16 +1,16 @@
-name: DeadZone Xiaomi ROM Build
+name: ⚡ DeadZone ROM Build
 
 on:
   workflow_dispatch:
     inputs:
       input_url:
-        description: "URL of the ROM to build"
+        description: "Direct URL to the Xiaomi firmware package"
         required: true
       builder_name:
-        description: "Builder name"
+        description: "Optional builder display name for notifications"
         required: false
       builder_id:
-        description: "Builder ID"
+        description: "Optional Telegram user ID for direct build updates"
         required: false
 
 jobs:
@@ -20,7 +20,7 @@ jobs:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
     steps:
-      - name: Maximize build space
+      - name: 🧹 Maximize build space
         uses: easimon/maximize-build-space@master
         with:
           swap-size-mb: 1024
@@ -29,7 +29,7 @@ jobs:
           remove-android: "true"
           remove-haskell: "true"
 
-      - name: Clean unused files and applications
+      - name: 🗑️ Clean unused files and applications
         run: |
           docker rmi `docker images -q` || true
           sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/sudo apt/sources.list.d || true
@@ -38,59 +38,59 @@ jobs:
           sudo apt -y autoclean || true
           sudo apt clean || true
 
-      - name: Checkout repository
+      - name: 📥 Checkout repository
         uses: actions/checkout@main
 
-      - name: Start notification
+      - name: 📣 Send start notification
         run: |
           pip install requests
           python notify.py start "${{ github.repository }}" "${{ inputs.input_url }}" "xiaomi" "${{ inputs.builder_name }}" "${{ inputs.builder_id }}"
 
-      - name: Set up time
+      - name: 🕒 Set workflow timezone
         run: |
           echo "Setting Vietnam timezone"
           sudo timedatectl set-timezone Asia/Ho_Chi_Minh
 
-      - name: Install OpenJDK
+      - name: ☕ Install OpenJDK
         uses: actions/setup-java@v4
         with:
           distribution: "temurin"
           java-version: "17"
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: |
           sudo bash setup.sh
 
-      - name: Grant permissions
+      - name: 🔐 Grant permissions
         run: |
           sudo chmod 777 -R *
 
-      - name: Build ROM
+      - name: 🛠️ Build ROM
         env:
           INPUT_URL: ${{ inputs.input_url }}
         run: |
           sudo -E bash build.sh "$INPUT_URL" "${{ github.repository }}" "xiaomi" "${{ inputs.builder_name }}" "${{ inputs.builder_id }}"
 
-      - name: Pack ROM
+      - name: 📦 Pack ROM
         run: |
           python notify.py pack "${{ github.repository }}" "${{ inputs.input_url }}" "xiaomi" "${{ inputs.builder_name }}" "${{ inputs.builder_id }}"
           sudo bash packROM.sh
 
-      - name: Set up Rclone
+      - name: ☁️ Set up Rclone
         run: |
           sudo -E bash uploadROM.sh setup "${{ secrets.GH_TOKEN }}" "${{ secrets.GH_REPO }}" "${{ secrets.RCLONE_TOKEN_PATH }}"
 
-      - name: Upload ROM
+      - name: ☁️ Upload ROM
         run: |
           python notify.py upload "${{ github.repository }}" "${{ inputs.input_url }}" "xiaomi" "${{ inputs.builder_name }}" "${{ inputs.builder_id }}"
           sudo -E bash uploadROM.sh
 
-      - name: Success notification
+      - name: ✅ Send success notification
         if: success()
         run: |
           python notify.py success "${{ github.repository }}" "${{ inputs.input_url }}" "xiaomi" "${{ inputs.builder_name }}" "${{ inputs.builder_id }}"
 
-      - name: Failure notification
+      - name: ❌ Send failure notification
         if: failure()
         run: |
           python notify.py fail "${{ github.repository }}" "${{ inputs.input_url }}" "xiaomi" "${{ inputs.builder_name }}" "${{ inputs.builder_id }}"

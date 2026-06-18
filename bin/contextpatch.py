@@ -43,7 +43,7 @@ def scan_context(file) -> dict:  # Read a context file and return a dictionary.
             filepath, *other = i.strip().replace('\\', '').split()
             context[filepath] = other
             if len(other) > 1:
-                print(f"[Warn] {i[0]} has too much data.")
+                print(f"[Warn] Context entry has unexpected extra fields: {i.strip()}")
     return context
 
 
@@ -64,7 +64,7 @@ def context_patch(fs_file, dir_path) -> tuple:  # Compare two dictionaries.
     r_new_fs = {}
     add_new = 0
     permission_d = None
-    print("ContextPatcher: Load origin %d" % (len(fs_file.keys())) + " entries")
+    print("ContextPatcher: Loaded %d original entries" % (len(fs_file.keys())))
     try:
         if dir_path.endswith('/system'):
             permission_d = ['u:object_r:system_file:s0']
@@ -106,13 +106,13 @@ def main(dir_path, fs_config) -> None:
     new_fs, add_new = context_patch(scan_context(os.path.abspath(fs_config)), dir_path)
     with open(fs_config, "w+", encoding='utf-8', newline='\n') as f:
         f.writelines([i + " " + " ".join(new_fs[i]) + "\n" for i in sorted(new_fs.keys())])
-    print('ContextPatcher: Add %d' % add_new + " entries")
+    print("ContextPatcher: Added %d new entries" % add_new)
 
 
 def usage():
     print("Usage:")
     print("%s <folder> <context_config>" % (sys.argv[0]))
-    print("    This script will auto patch file_context")
+    print("    Auto-patch a file_contexts configuration from an extracted partition tree.")
 
 
 if __name__ == '__main__':
@@ -123,7 +123,7 @@ if __name__ == '__main__':
         sys.exit()
     if os.path.isdir(sys.argv[1]) or os.path.isfile(sys.argv[2]):
         main(sys.argv[1], sys.argv[2])
-        print("Done!")
+        print("Context patch completed.")
     else:
-        print("The path or filetype you have given may wrong,please check it weather correct.")
+        print("The provided path or file type is invalid. Please verify the arguments.")
         usage()

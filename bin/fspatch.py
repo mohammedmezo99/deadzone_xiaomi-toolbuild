@@ -17,7 +17,7 @@ def scanfs(file) -> dict:
             filepath, *other = i.strip().split()
             filesystem_config[filepath] = other
             if long := len(other) > 4:
-                print(f"[Warn] {i[0]} has too much data-{long}.")
+                print(f"[Warn] Filesystem entry has unexpected extra fields: {i.strip()} ({long})")
     return filesystem_config
 
 
@@ -57,7 +57,7 @@ def fs_patch(fs_file, dir_path) -> tuple:  # Compare two dictionaries.
     new_fs = {}
     new_add = 0
     r_fs = {}
-    print("FsPatcher: Load origin %d" % (len(fs_file.keys())) + " entries")
+    print("FsPatcher: Loaded %d original entries" % (len(fs_file.keys())))
     for i in scan_dir(os.path.abspath(dir_path)):
         if fs_file.get(i):
             new_fs[i] = fs_file[i]
@@ -113,7 +113,7 @@ def fs_patch(fs_file, dir_path) -> tuple:  # Compare two dictionaries.
                 gid = '0'
                 mode = '0644'
                 config = [uid, gid, mode]
-            print(f'Add [{i}{config}]')
+            print(f"ADD [{i}{config}]")
             r_fs[i] = 1
             new_add += 1
             new_fs[i] = config
@@ -124,11 +124,11 @@ def main(dir_path, fs_config) -> None:
     new_fs, new_add = fs_patch(scanfs(os.path.abspath(fs_config)), dir_path)
     with open(fs_config, "w", encoding='utf-8', newline='\n') as f:
         f.writelines([i + " " + " ".join(new_fs[i]) + "\n" for i in sorted(new_fs.keys())])
-    print('FsPatcher: Add %d' % new_add + " entries")
+    print("FsPatcher: Added %d new entries" % new_add)
 def Usage():
     print("Usage:")
     print("%s <folder> <fs_config>" %(sys.argv[0]))
-    print("    This script will auto patch fs_config")
+    print("    Auto-patch an fs_config file from an extracted partition tree.")
 
 if __name__ == '__main__':
     import sys
@@ -141,9 +141,9 @@ if __name__ == '__main__':
         if sys.argv[3] == '-i':
             VERBOSE = True
     if (os.path.isdir(sys.argv[1]) or os.path.isfile(sys.argv[2])):
-        print("FSPATCH by [%s]\nLICENES [%s]\nVERSION [%s]" %(AUTHOR, LICENES, VERSION))
+        print("FsPatcher by [%s]\nLICENSE [%s]\nVERSION [%s]" %(AUTHOR, LICENES, VERSION))
         main(sys.argv[1], sys.argv[2])
-        print("Done!")
+        print("Filesystem patch completed.")
     else:
-        print("The path or filetype you have given may wrong,please check it wether correct.")
+        print("The provided path or file type is invalid. Please verify the arguments.")
         Usage()

@@ -33,22 +33,22 @@ def read_file_if_exists(path, default=""):
 def get_status_info(status):
     status = status.lower()
     if status == "start":
-        return "🚀", "ENVIRONMENT INITIALIZATION", "Preparing the ROM build environment..."
+        return "🚀", "Waiting", "Preparing the DeadZone build environment."
     if status == "download":
-        return "📥", "DOWNLOADING BASE ROM", "Downloading the base ROM package..."
+        return "📥", "Running", "Downloading the base ROM package."
     if status == "unpack":
-        return "🔓", "UNPACKING PARTITIONS", "Extracting payload.bin or new.dat.br files..."
+        return "🧩", "Running", "Extracting firmware partitions and image data."
     if status == "build":
-        return "🛠️", "BUILDING AND PATCHING ROM", "Applying build and system patch steps..."
+        return "🛠️", "Running", "Applying the configured ROM patching flow."
     if status == "pack":
-        return "📦", "PACKAGING ROM ZIP", "Packaging partitions into a flashable archive..."
+        return "📦", "Running", "Packing the ROM output into a flashable archive."
     if status == "upload":
-        return "📤", "UPLOADING BUILD", "Uploading the final ROM package..."
+        return "☁️", "Running", "Uploading the completed ROM package."
     if status == "success":
-        return "✅", "BUILD COMPLETED", "The ROM build finished successfully."
+        return "✅", "Done", "The DeadZone build finished successfully."
     if status == "fail":
-        return "❌", "BUILD FAILED", "The ROM build stopped because of an error."
-    return "ℹ️", "STATUS UPDATE", status.upper()
+        return "❌", "Failed", "The DeadZone build stopped because of an error."
+    return "ℹ️", "Running", status.upper()
 
 
 def get_progress_bar(status):
@@ -66,7 +66,7 @@ def get_progress_bar(status):
             timeline.append("✅" if status == "success" else "🔵")
         else:
             timeline.append("⚪")
-    return " ➔ ".join(timeline)
+    return " ➜ ".join(timeline)
 
 
 def is_available(value):
@@ -121,9 +121,9 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
     builder_text = builder_name if builder_name else "System"
 
     message_lines = [
-        "🚀 *DeadZone Build Progress*",
+        "⚡ *DeadZone Build Center*",
         "━━━━━━━━━━━━━━━━━━",
-        f"👤 *Builder:* {builder_text}",
+        f"👤 *Builder:* `{builder_text}`",
     ]
 
     if is_available(device_name):
@@ -137,10 +137,10 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
     if is_available(version_rom):
         os_parts.append(version_rom)
     if os_parts:
-        message_lines.append(f"💿 *Operating system:* `{' | '.join(os_parts)}`")
+        message_lines.append(f"💿 *ROM:* `{' | '.join(os_parts)}`")
 
     if is_available(region):
-        message_lines.append(f"🌐 *Region:* `{region}`")
+        message_lines.append(f"🌍 *Region:* `{region}`")
 
     android_parts = []
     if is_available(android_ver):
@@ -148,7 +148,7 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
     if is_available(sdk_level):
         android_parts.append(f"SDK {sdk_level}")
     if android_parts:
-        message_lines.append(f"🤖 *Android:* `{' | '.join(android_parts)}`")
+        message_lines.append(f"⚙️ *Platform:* `{' | '.join(android_parts)}`")
 
     fs_parts = []
     if is_available(fs_type):
@@ -156,26 +156,26 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
     if is_available(structure):
         fs_parts.append(structure)
     if fs_parts:
-        message_lines.append(f"🗄️ *Structure / FS:* `{' | '.join(fs_parts)}`")
+        message_lines.append(f"🗂️ *Structure / FS:* `{' | '.join(fs_parts)}`")
 
     if is_available(version_tool):
-        message_lines.append(f"🛠️ *Tool version:* `{version_tool}`")
+        message_lines.append(f"🛠️ *DeadZone Version:* `{version_tool}`")
 
     message_lines.append("━━━━━━━━━━━━━━━━━━")
-    message_lines.append(f"📊 *Status:* {icon} *{status_title}*")
+    message_lines.append(f"{icon} *Status:* `{status_title}`")
     message_lines.append(f"📝 *Details:* _{status_desc}_")
     message_lines.append(f"📈 *Progress:* `{get_progress_bar(status)}`")
     message_lines.append("")
 
     if status.lower() == "success" and output_zip:
-        message_lines.append(f"📦 *Output zip:* `{output_zip}`")
+        message_lines.append(f"☁️ *Upload:* `{output_zip}`")
         message_lines.append("")
 
     message_lines.append(f"🆔 *Build ID:* `{build_id}`")
-    message_lines.append(f"🚀 *Build log:* [View here]({action_url})")
-    message_lines.append(f"🔗 *Base ROM source:* [Open link]({rom_link})")
+    message_lines.append(f"🔗 *Link:* [Base ROM Source]({rom_link})")
+    message_lines.append(f"📜 *Log:* [GitHub Actions Run]({action_url})")
     message_lines.append("")
-    message_lines.append("`Project DeadZone By MEZO`")
+    message_lines.append("⚡ `Project DeadZone By MEZO`")
 
     message = "\n".join(message_lines)
 
@@ -213,15 +213,15 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
             pm_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
             if status.lower() == "success":
                 pm_text = (
-                    f"🎉 *ROM build completed successfully.*\n\n"
+                    f"🎉 *DeadZone build completed successfully.*\n\n"
                     f"{message}\n"
-                    f"🔎 *Build details:* [Open build log]({action_url})"
+                    f"🔎 *Review the full build log:* [Open GitHub Actions Run]({action_url})"
                 )
             else:
                 pm_text = (
-                    f"⚠️ *ROM build failed.*\n\n"
+                    f"⚠️ *DeadZone build failed.*\n\n"
                     f"{message}\n"
-                    f"💡 *Suggestion:* Open the build log above for the failure details."
+                    f"💡 *Next step:* Open the build log above to inspect the failure details."
                 )
 
             pm_payload = {

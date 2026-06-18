@@ -12,7 +12,7 @@ build_date=$(TZ=UTC date +"%y%m%d")
 #patching
 if [[ $rom_os == "MIUI" ]]; then
 
-mods "Add ROM Information To MIUI"
+mods "Adding ROM information to MIUI."
   mkdir -p $WORK_DIR/apk_temp
   isSettingsDIR=$(find "$MAIN_FOLDER" -type d -name "Settings")
   isSettings=$(find "$MAIN_FOLDER" -type f -name "Settings.apk")
@@ -24,24 +24,24 @@ mods "Add ROM Information To MIUI"
   sed -i "s/MIUI Pad /MIUINT $myversion | /g" $p1
   sed -i "s/MIUI Fold /MIUINT $myversion | /g" $p1
 
-  mods "Rebuild..."
+  mods "Rebuilding Settings.apk."
   Settings=$(basename $isSettings)
   $APKEDITOR b -f -i $WORK_DIR/apk_temp/isSettings.apk.out -o $WORK_DIR/apk_temp/final/$Settings >/dev/null 2>&1
 
   if [ -f "$WORK_DIR/apk_temp/final/$Settings" ]; then
-    mods "Cleaning WorkSpace"
+    mods "Cleaning workspace."
     rm -rf $isSettingsDIR/*
-    mods "Finish Modding"
+    mods "Deploying the patched Settings.apk."
     cp -rf $WORK_DIR/apk_temp/final/$Settings $isSettingsDIR
-    mods "Cleaned!"
+    mods "Workspace cleaned."
 
   fi
 
   rm -rf $WORK_DIR/apk_temp
-  mods "Adding MIUI Information Done!"
+  mods "MIUI ROM information update completed."
 else
 
-mods "Add ROM Information To HyperOS"
+mods "Adding ROM information to HyperOS."
   mkdir -p $WORK_DIR/apk_temp
   isSettingsDIR=$(find "$MAIN_FOLDER" -type d -name "Settings")
   isSettings=$(find "$MAIN_FOLDER" -type f -name "Settings.apk")
@@ -55,34 +55,34 @@ mods "Add ROM Information To HyperOS"
   final_version="${base_rom_code%.*}"
   simposcode="${final_version#OS}"
 
-  mods "Updating getMiuiVersionInCard"
+  mods "Updating getMiuiVersionInCard."
   $repS $tar1 $p1
-  mods "Updating getRoXmsVersion"
+  mods "Updating getRoXmsVersion."
   $repS $tar2 $p1
-  mods "Updating getXmsVersion"
+  mods "Updating getXmsVersion."
   $repS $tar3 $p1
-  mods "Updating getSimpleOSVersionCode"
+  mods "Updating getSimpleOSVersionCode."
   $repS $tar4 $p1
 
-  mods "Updating build.prop"
+  mods "Updating build.prop."
   echo "ro.nothings.version=DeadZone $myversion | $final_version" >> $my
   echo "ro.nothings.osversion=${simposcode}.${build_date}" >> $my
   echo "ro.nothings.simposcode=Project DeadZone By MEZO" >> $my
 
-  mods "Rebuild..."
+  mods "Rebuilding Settings.apk."
   Settings=$(basename $isSettings)
   $APKEDITOR b -f -i $WORK_DIR/apk_temp/isSettings.apk.out -o $WORK_DIR/apk_temp/final/$Settings >/dev/null 2>&1
 
   if [ -f "$WORK_DIR/apk_temp/final/$Settings" ]; then
-    mods "Cleaning WorkSpace"
+    mods "Cleaning workspace."
     rm -rf $isSettingsDIR/*
-    mods "Finish Modding"
+    mods "Deploying the patched Settings.apk."
     cp -rf $WORK_DIR/apk_temp/final/$Settings $isSettingsDIR
-    mods "Cleaned!"
+    mods "Workspace cleaned."
 
   fi
 
   rm -rf $WORK_DIR/apk_temp
-  mods "Adding HyperOS Information Done!"
+  mods "HyperOS ROM information update completed."
 
 fi
