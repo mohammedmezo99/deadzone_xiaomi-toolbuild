@@ -65,9 +65,9 @@ mods "Adding ROM information to HyperOS."
   $repS $tar4 $p1
 
   mods "Updating build.prop."
-  echo "ro.nothings.version=DeadZone $myversion | $final_version" >> $my
-  echo "ro.nothings.osversion=${simposcode}.${build_date}" >> $my
-  echo "ro.nothings.simposcode=Project DeadZone By MEZO" >> $my
+  echo "ro.deadzone.version=DeadZone $myversion | $final_version" >> $my
+  echo "ro.deadzone.osversion=${simposcode}.${build_date}" >> $my
+  echo "ro.deadzone.simposcode=Project DeadZone By MEZO" >> $my
 
   mods "Rebuilding Settings.apk."
   Settings=$(basename $isSettings)
