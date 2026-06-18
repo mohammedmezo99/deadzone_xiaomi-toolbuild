@@ -19,6 +19,12 @@ jobs:
     env:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
+      RCLONE_CONFIG_B64: ${{ secrets.RCLONE_CONFIG_B64 }}
+      GDRIVE_REMOTE: "gdrive"
+      GDRIVE_PATH: "DeadZoneBuilds"
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      GH_REPO: ${{ secrets.GH_REPO }}
+      RCLONE_TOKEN_PATH: ${{ secrets.RCLONE_TOKEN_PATH }}
     steps:
       - name: 🧹 Maximize build space
         uses: easimon/maximize-build-space@master

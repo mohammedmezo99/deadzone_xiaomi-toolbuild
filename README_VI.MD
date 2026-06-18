@@ -39,6 +39,65 @@ bash packROM.sh
 bash uploadROM.sh
 ```
 
+## ☁️ Secrets And Upload Setup
+
+Required for Telegram private notifications:
+
+| Secret | Purpose |
+| --- | --- |
+| `TELEGRAM_BOT_TOKEN` | Telegram bot token used by the notification script |
+| `TELEGRAM_CHANNEL_ID` | Existing repository secret name for the Telegram target. For private notifications, set this to your personal Telegram chat ID. |
+
+Required for Google Drive upload:
+
+| Secret | Purpose |
+| --- | --- |
+| `RCLONE_CONFIG_B64` | Recommended method. Stores the full `rclone.conf` content as a Base64 GitHub Actions secret. |
+
+Optional Google Drive settings:
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `GDRIVE_REMOTE` | `gdrive` | Rclone remote name to use for upload and public link generation |
+| `GDRIVE_PATH` | `DeadZoneBuilds` | Destination folder path inside the configured Google Drive remote |
+
+Legacy fallback:
+
+| Secret | Purpose |
+| --- | --- |
+| `GH_TOKEN` | GitHub token used to fetch a hosted legacy `rclone.conf` |
+| `GH_REPO` | Repository source for the hosted legacy `rclone.conf` |
+| `RCLONE_TOKEN_PATH` | Path to the hosted legacy `rclone.conf` file |
+
+`RCLONE_CONFIG_B64` is the preferred setup. It keeps the complete `rclone.conf` inside GitHub Actions secrets, so this repository does not depend on a separate private secrets repository.
+
+Windows PowerShell:
+
+```powershell
+$B64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes("C:\path\to\rclone.conf"))
+$B64 | Set-Clipboard
+```
+
+Linux / Bash:
+
+```bash
+base64 -w 0 rclone.conf
+```
+
+The rclone remote name inside `rclone.conf` must match `GDRIVE_REMOTE`.
+
+Default expected remote:
+
+```ini
+[gdrive]
+```
+
+If your remote is `[starxONEDRIVE]`, set:
+
+```text
+GDRIVE_REMOTE=starxONEDRIVE
+```
+
 ## 🌐 Community
 
 | Community | Link |
