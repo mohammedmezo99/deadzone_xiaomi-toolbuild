@@ -36,7 +36,7 @@ def get_fix_permission(path: str):
     return result
 
 
-def scan_context(file) -> dict:  # 读取context文件返回一个字典
+def scan_context(file) -> dict:  # Read a context file and return a dictionary.
     context = {}
     with open(file, "r", encoding='utf-8') as file_:
         for i in file_.readlines(): 
@@ -47,7 +47,7 @@ def scan_context(file) -> dict:  # 读取context文件返回一个字典
     return context
 
 
-def scan_dir(folder) -> list:  # 读取解包的目录，返回一个字典
+def scan_dir(folder) -> list:  # Read the extracted directory and return its paths.
     part_name = os.path.basename(folder)
     allfiles = ['/', '/lost+found', f'/{part_name}/lost+found', f'/{part_name}', f'/{part_name}/']
     for root, dirs, files in os.walk(folder, topdown=True):
@@ -59,7 +59,7 @@ def scan_dir(folder) -> list:  # 读取解包的目录，返回一个字典
             yield rv
 
 
-def context_patch(fs_file, dir_path) -> tuple:  # 接收两个字典对比
+def context_patch(fs_file, dir_path) -> tuple:  # Compare two dictionaries.
     new_fs = {}
     r_new_fs = {}
     add_new = 0

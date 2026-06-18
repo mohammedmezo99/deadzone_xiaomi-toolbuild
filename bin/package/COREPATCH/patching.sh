@@ -376,7 +376,7 @@ patch_smali_method_in_file() {
 
   local inject_line=$((start + rel - 1))
 
-  # inject từng dòng
+  # Inject each line.
   while IFS= read -r line; do
     sed -i "${inject_line}a\\
 $line" "$file"
@@ -451,7 +451,7 @@ patch_smali_after_keyword() {
     return
   }
 
-  # 1️⃣ Tìm dòng bắt đầu method
+  # 1. Find the method start line.
   local start
   start=$(grep -n "^[[:space:]]*\.method.* $method" "$file" | cut -d: -f1 | head -n1)
 
@@ -460,7 +460,7 @@ patch_smali_after_keyword() {
     return
   }
 
-  # 2️⃣ Tìm .end method
+  # 2. Find the .end method line.
   local total end=0 i="$start"
   total=$(wc -l < "$file")
 
@@ -477,7 +477,7 @@ patch_smali_after_keyword() {
     return
   }
 
-  # 3️⃣ Tìm dòng chứa keyword trong phạm vi method
+  # 3. Find the line containing the keyword inside the method.
   local rel
   rel=$(sed -n "${start},${end}p" "$file" \
     | grep -n "$keyword" \
@@ -490,7 +490,7 @@ patch_smali_after_keyword() {
 
   local inject_line=$((start + rel - 1))
 
-  # 4️⃣ Inject từng dòng sau keyword
+  # 4. Inject each line after the keyword.
   while IFS= read -r line; do
     sed -i "${inject_line}a\\
 $line" "$file"
@@ -511,7 +511,7 @@ delete_lines_in_smali_method() {
     return 1
   }
 
-  # Tìm dòng bắt đầu method
+  # Find the method start line.
   local start
   start=$(grep -n "^[[:space:]]*\.method.* $method" "$file" | cut -d: -f1 | head -n1)
 
@@ -520,7 +520,7 @@ delete_lines_in_smali_method() {
     return 1
   }
 
-  # Tìm dòng kết thúc method
+  # Find the method end line.
   local total end=0 i="$start"
   total=$(wc -l < "$file")
 
@@ -537,22 +537,22 @@ delete_lines_in_smali_method() {
     return 1
   }
 
-  # Kiểm tra hợp lệ
+  # Validate the requested line range.
   if [ "$from_line" -lt 1 ] || [ "$to_line" -lt "$from_line" ]; then
     echo "⚠️ Invalid line range"
     return 1
   fi
 
-  # Tính vị trí thực tế trong file
+  # Calculate the real positions inside the file.
   local real_start=$((start + from_line))
   local real_end=$((start + to_line))
 
-  # Không cho xóa vượt .end method
+  # Do not delete beyond .end method.
   if [ "$real_end" -ge "$end" ]; then
     real_end=$((end - 1))
   fi
 
-  # Thực hiện xóa
+  # Delete the selected lines.
   sed -i "${real_start},${real_end}d" "$file"
 
   echo "✓ Deleted lines $from_line → $to_line inside $method in $(basename "$file")"

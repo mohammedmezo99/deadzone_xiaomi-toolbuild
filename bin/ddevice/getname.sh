@@ -9,9 +9,9 @@ KEY="${1:-$(cat $work_dir/bin/ddevice/device_f.txt)}"
 EXACT_KEY=$(grep -ix "$KEY" "$work_dir/bin/ddevice/data/devices_data.txt" 2>/dev/null || grep -ix "$KEY" "$work_dir/bin/ddevice/data/pad_data.txt" 2>/dev/null)
 
 if [ -z "$EXACT_KEY" ]; then
-  # Fallback to key itself if not matched in the lists
+  # Fallback to the input key when no list match is found.
   EXACT_KEY="$KEY"
 fi
 
-VALUE=$(jq -r --arg key "$EXACT_KEY" '.[$key] // "Không tìm thấy key"' "$FILE_JSON")
+VALUE=$(jq -r --arg key "$EXACT_KEY" '.[$key] // "Key not found"' "$FILE_JSON")
 echo "$VALUE" > $work_dir/bin/ddevice/name_devices.txt

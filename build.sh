@@ -36,7 +36,7 @@ elif unzip -l ${baserom} | grep -q "br$";then
     baserom_type="br"
     echo $baserom_type > $work_dir/bin/ddevice/romtype.txt
     super_list="system vendor product odm system_ext mi_ext"
-    unpack "Found broli file"
+    unpack "Found Brotli archive"
     unpack "ROM validation passed."
 elif unzip -l ${baserom} | grep -q "images/super.img*"; then
     unpack "Found super.img.* files"
@@ -66,7 +66,7 @@ elif [[ ${baserom_type} == 'br' ]];then
     unzip ${baserom} -d build/baserom >/dev/null 2>&1 || error "Extracting new.dat.br error"
     unpack "File new.dat.br extracted."
 elif [[ ${is_base_rom_eu} == true ]];then
-    unpack "Extracting files from BASETROM [super.img]"
+    unpack "Extracting files from base ROM [super.img]"
     unzip ${baserom} 'images/*' -d build/baserom >  /dev/null 2>&1 ||error "Extracting [super.img] error"
     unpack "Merging super.img.* into super.img"
     simg2img build/baserom/images/super.img.* build/baserom/images/super.img
@@ -81,23 +81,23 @@ fi
 
 if [[ ${baserom_type} == 'payload' ]]; then
     unpack "Unpacking payload.bin"
-    payload-extract extract -o build/baserom/images/ build/baserom/payload.bin >/dev/null 2>&1 || error "Unpacking payload.bin failed"    
+    payload-extract extract -o build/baserom/images/ build/baserom/payload.bin >/dev/null 2>&1 || error "Unpacking payload.bin failed"
 elif [[ ${baserom_type} == 'br' ]];then
     super_list=$(cat build/baserom/dynamic_partitions_op_list | grep "add " | awk '{ print $2 }')
     unpack "Unpacking new.dat.br"
-        for brotlipart in ${super_list}; do 
+        for brotlipart in ${super_list}; do
             brotli -d build/baserom/$brotlipart.new.dat.br >/dev/null 2>&1
             python3 $work_dir/bin/Linux/x86_64/sdat2img.py build/baserom/$brotlipart.transfer.list build/baserom/$brotlipart.new.dat build/baserom/images/$brotlipart.img >/dev/null 2>&1
             rm -rf build/baserom/$brotlipart.new.dat* build/baserom/$brotlipart.transfer.list build/baserom/$brotlipart.patch.*
         done
 elif [[ ${is_base_rom_eu} == true ]];then
-    unpack "Unpacking BASEROM [super.img]"
+    unpack "Unpacking base ROM [super.img]"
     super_list=$(python3 bin/lpunpack.py --info build/baserom/super.img | grep "super:" | awk '{ print $5 }')
     for i in ${super_list}; do
         if [[ $i == *_a ]];then
             i=${i%_a}
             python3 bin/lpunpack.py -p ${i}_a build/baserom/super.img build/baserom/images >/dev/null 2>&1
-            mv build/baserom/images/${i}_a.img build/baserom/images/${i}.img 
+            mv build/baserom/images/${i}_a.img build/baserom/images/${i}.img
         else
             python3 bin/lpunpack.py -p ${i} build/baserom/super.img build/baserom/images >/dev/null 2>&1
         fi
@@ -121,12 +121,11 @@ fi
 rm -rf build/baserom/payload.bin
 rm -rf build/baserom/images/super.img
 
-
-mods "Gathering Devices Infomations"
+mods "Gathering device information"
 bash $work_dir/bin/ddevice/getname.sh $getvar
 bash $work_dir/bin/ddevice/fetchINFO.sh
 
-# Gửi thông báo đang Build với đầy đủ Codename và Version
+# Send the build notification after codename and version are available.
 python3 $work_dir/notify.py build "$repo_name" "$baserom" "$prefix_id" "$builder_name" "$builder_id"
 
 bash $work_dir/bin/ddevice/DEBLOAT/debloat.sh
@@ -140,4 +139,3 @@ bash $work_dir/bin/modfile/UpdateFile/insupdate.sh
 bash $work_dir/bin/package/patchpackage.sh
 
 find "$work_dir/build/baserom/images/" -exec touch -t 200901010000.00 {} + 2> /dev/null || true
-

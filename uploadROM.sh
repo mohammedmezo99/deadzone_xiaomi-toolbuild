@@ -68,7 +68,7 @@ mv ${os_type}_${device_code}_${base_rom_code}.zip ../
 popd || exit
 hash=$(md5sum out/${os_type}_${device_code}_${base_rom_code}.zip |head -c 5)
 mv out/${os_type}_${device_code}_${base_rom_code}.zip out/${os_type}_${polyxver}_${device_code}_${base_rom_code}_${hash}_${status}.zip
-repack "Build completed"    
+repack "Build completed"
 repack "Output: "
 repack "$(pwd)/out/${os_type}_${polyxver}_${device_code}_${base_rom_code}_${hash}_${status}.zip"
 upload "Uploading"
@@ -92,10 +92,10 @@ else
         upload "Error uploading file to OneDrive: $FILENAME"
         exit 1
     }
-fi  
+fi
 
 upload "Clean Workflow.."
 rm -rf $work_dir/out
 rm -rf $work_dir/build
 
-upload "Build ${os_type}_${polyxver} for ${device_code} successfull!"
+upload "Build ${os_type}_${polyxver} for ${device_code} was successful."

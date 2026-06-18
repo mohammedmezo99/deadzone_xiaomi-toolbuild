@@ -206,8 +206,8 @@ def apply_patch(patch: Patch, base_dir: str) -> bool:
 
 def main():
     parser = argparse.ArgumentParser(description="Kaorios smali patcher")
-    parser.add_argument("base_dir", help="Thư mục chứa smali")
-    parser.add_argument("--services", action="store_true", help="Patch thêm SystemServer (initSystemServer)")
+    parser.add_argument("base_dir", help="Directory containing smali files")
+    parser.add_argument("--services", action="store_true", help="Also patch SystemServer (initSystemServer)")
     args = parser.parse_args()
 
     if not os.path.isdir(args.base_dir):

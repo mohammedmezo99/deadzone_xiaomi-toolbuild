@@ -53,7 +53,7 @@ def islink(file) -> str and None:
             return
 
 
-def fs_patch(fs_file, dir_path) -> tuple:  # 接收两个字典对比
+def fs_patch(fs_file, dir_path) -> tuple:  # Compare two dictionaries.
     new_fs = {}
     new_add = 0
     r_fs = {}

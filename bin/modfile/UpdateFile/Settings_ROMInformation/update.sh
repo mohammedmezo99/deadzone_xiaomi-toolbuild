@@ -10,7 +10,7 @@ repS="python3 $WORK_DIR/bin/strRep.py"
 build_date=$(TZ=UTC date +"%y%m%d")
 
 #patching
-if [[ $rom_os == "MIUI" ]]; then 
+if [[ $rom_os == "MIUI" ]]; then
 
 mods "Add ROM Information To MIUI"
   mkdir -p $WORK_DIR/apk_temp
@@ -34,7 +34,7 @@ mods "Add ROM Information To MIUI"
     mods "Finish Modding"
     cp -rf $WORK_DIR/apk_temp/final/$Settings $isSettingsDIR
     mods "Cleaned!"
-  
+
   fi
 
   rm -rf $WORK_DIR/apk_temp
@@ -65,9 +65,9 @@ mods "Add ROM Information To HyperOS"
   $repS $tar4 $p1
 
   mods "Updating build.prop"
-  echo "ro.nothings.version=NothingsOS $myversion | $final_version" >> $my
+  echo "ro.nothings.version=DeadZone $myversion | $final_version" >> $my
   echo "ro.nothings.osversion=${simposcode}.${build_date}" >> $my
-  echo "ro.nothings.simposcode=NothingsVN OpenSource $myversion  " >> $my
+  echo "ro.nothings.simposcode=Project DeadZone By MEZO" >> $my
 
   mods "Rebuild..."
   Settings=$(basename $isSettings)
@@ -79,7 +79,7 @@ mods "Add ROM Information To HyperOS"
     mods "Finish Modding"
     cp -rf $WORK_DIR/apk_temp/final/$Settings $isSettingsDIR
     mods "Cleaned!"
-  
+
   fi
 
   rm -rf $WORK_DIR/apk_temp
