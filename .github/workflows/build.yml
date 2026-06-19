@@ -26,6 +26,8 @@ on:
     secrets:
       TELEGRAM_BOT_TOKEN:
         required: false
+      MEZO_PRIVATE_CHAT_ID:
+        required: false
       TELEGRAM_CHAT_ID:
         required: false
       TELEGRAM_CHANNEL_ID:
@@ -49,6 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      MEZO_PRIVATE_CHAT_ID: ${{ secrets.MEZO_PRIVATE_CHAT_ID }}
       TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
       RCLONE_CONFIG_B64: ${{ secrets.RCLONE_CONFIG_B64 }}

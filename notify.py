@@ -178,7 +178,12 @@ def read_gdrive_link():
 
 
 def get_channel_id():
-    return os.environ.get("TELEGRAM_CHAT_ID") or os.environ.get("TELEGRAM_CHANNEL_ID")
+    # Private build notifications only. Public group messages are handled by MEZO/Bot/public_lite_bot.py.
+    return (
+        os.environ.get("MEZO_PRIVATE_CHAT_ID")
+        or os.environ.get("TELEGRAM_CHAT_ID")
+        or os.environ.get("TELEGRAM_CHANNEL_ID")
+    )
 
 
 def warn_telegram(message):
