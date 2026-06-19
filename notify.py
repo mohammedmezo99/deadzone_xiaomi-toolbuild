@@ -30,6 +30,7 @@ GDRIVE_REPORTS = [
 ]
 MAX_ACTIVITY_ITEMS = 7
 EDIT_INTERVAL_SECONDS = 4.0
+TELEGRAM_TEXT_LIMIT = 3900
 
 
 def read_file_if_exists(path, default=""):
@@ -254,6 +255,40 @@ def post_telegram(bot_token, method, payload):
     return {}
 
 
+def sanitize_telegram_text(text):
+    clean = (text or "").replace("\r\n", "\n").replace("\r", "\n")
+    clean = clean.replace("\x00", "")
+    return clean
+
+
+def truncate_telegram_text(text, limit=TELEGRAM_TEXT_LIMIT):
+    clean = sanitize_telegram_text(text)
+    if len(clean) <= limit:
+        return clean
+    return clean[: limit - 3].rstrip() + "..."
+
+
+def build_message_text(message_lines):
+    return truncate_telegram_text("\n".join(message_lines))
+
+
+def send_telegram_with_fallback(bot_token, channel_id, rich_payload):
+    try:
+        return post_telegram(bot_token, "sendMessage", rich_payload)
+    except requests.RequestException:
+        warn_telegram("rich send failed; retrying as plain text.")
+        plain_payload = {
+            "chat_id": channel_id,
+            "text": truncate_telegram_text(rich_payload.get("text", "")),
+            "disable_web_page_preview": True,
+        }
+        try:
+            return post_telegram(bot_token, "sendMessage", plain_payload)
+        except requests.RequestException:
+            warn_telegram("plain send failed; continuing build.")
+            return {}
+
+
 def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id=None, build_id="Unknown", builder_name="", builder_id="", live_message=""):
     icon, status_title, status_desc = get_status_info(status)
     state = load_state()
@@ -379,7 +414,7 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
     message_lines.append("")
     message_lines.append("⚡ `Project DeadZone By MEZO`")
 
-    message = "\n".join(message_lines)
+    message = build_message_text(message_lines)
 
     effective_msg_id = msg_id or state.get("message_id")
     response_data = {}
@@ -389,27 +424,25 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
         edit_payload = {
             "chat_id": channel_id,
             "message_id": int(str(effective_msg_id).strip()),
-            "text": message,
+            "text": truncate_telegram_text(message),
             "parse_mode": "Markdown",
             "disable_web_page_preview": True,
         }
         try:
             response_data = post_telegram(bot_token, "editMessageText", edit_payload)
         except requests.RequestException as error:
-            warn_telegram(f"edit failed, sent a new message instead. ({error})")
+            warn_telegram(f"edit failed; sending a new message. ({error})")
             used_fallback_send = True
 
     if not response_data and (used_fallback_send or not has_valid_message_id(effective_msg_id)):
         send_payload = {
             "chat_id": channel_id,
-            "text": message,
+            "text": truncate_telegram_text(message),
             "parse_mode": "Markdown",
             "disable_web_page_preview": True,
         }
-        try:
-            response_data = post_telegram(bot_token, "sendMessage", send_payload)
-        except requests.RequestException as error:
-            warn_telegram(f"send failed. ({error})")
+        response_data = send_telegram_with_fallback(bot_token, channel_id, send_payload)
+        if not response_data:
             state["last_edit_at"] = time.time()
             save_state(state)
             return
@@ -448,15 +481,27 @@ def send_notification(status, repo_name, rom_link, channel_id, bot_token, msg_id
 
         pm_payload = {
             "chat_id": target_builder_id,
-            "text": pm_text,
+            "text": truncate_telegram_text(pm_text),
             "parse_mode": "Markdown",
             "disable_web_page_preview": True,
         }
         try:
-            requests.post(pm_url, json=pm_payload)
+            response = requests.post(pm_url, json=pm_payload)
+            response.raise_for_status()
             print(f"Sent a direct message to user {target_builder_id}.")
-        except Exception as error:
-            warn_telegram(f"direct message failed. ({error})")
+        except Exception:
+            warn_telegram("rich send failed; retrying as plain text.")
+            fallback_payload = {
+                "chat_id": target_builder_id,
+                "text": truncate_telegram_text(pm_text),
+                "disable_web_page_preview": True,
+            }
+            try:
+                response = requests.post(pm_url, json=fallback_payload)
+                response.raise_for_status()
+                print(f"Sent a direct message to user {target_builder_id}.")
+            except Exception:
+                warn_telegram("plain send failed; continuing build.")
 
 
 def main():

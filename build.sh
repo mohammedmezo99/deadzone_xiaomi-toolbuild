@@ -87,27 +87,27 @@ apply_deadzone_style_runtime() {
             mods "Applying DeadZone Lite style"
             info "Skipping DeadZone Ninja style because STYLE=$style_name"
             if [[ "$platform_id" == "OS3_A16" ]]; then
-                mods "Applying Lite OS3_A16 manual runtime pack."
                 bash "$work_dir/DeadZone/Patches/ModFile/OS3_A16/Lite/insmod.sh" "$rom_root" || {
                     error "Lite OS3_A16 manual runtime pack failed."
                     exit 1
                 }
             else
-                info "Lite manual runtime pack is not required for ${platform_id:-unknown platform}."
+                info "⏭️ Skipping Lite OS3_A16 pack because STYLE=$style_name PLATFORM=${platform_id:-unknown}"
             fi
             ;;
         gamingplus)
             mods "Applying DeadZone GamingPlus style"
             info "Skipping DeadZone Ninja style because STYLE=$style_name"
-            info "GamingPlus follows the official Build inheritance path: Lite base runtime only."
+            info "⏭️ Skipping Lite OS3_A16 pack because STYLE=$style_name PLATFORM=${platform_id:-unknown}"
             ;;
         legend)
             mods "Applying DeadZone Legend style"
             info "Skipping DeadZone Ninja style because STYLE=$style_name"
-            info "Legend follows the official Build inheritance path: GamingPlus -> Lite base runtime only."
+            info "⏭️ Skipping Lite OS3_A16 pack because STYLE=$style_name PLATFORM=${platform_id:-unknown}"
             ;;
         ninja)
             mods "Applying DeadZone Ninja style"
+            info "⏭️ Skipping Lite OS3_A16 pack because STYLE=$style_name PLATFORM=${platform_id:-unknown}"
             if [[ "$platform_id" == "OS3_A16" ]]; then
                 mods "Applying Ninja OS3_A16 manual runtime pack."
                 bash "$work_dir/DeadZone/Patches/ModFile/OS3_A16/Ninja/insmod.sh" "$rom_root" || {

@@ -8,6 +8,15 @@ export DZ_BASE_STYLE_ID="${DZ_BASE_STYLE_ID:-lite}"
 source "$LITE_PATCH_DIR/lite_smali_master.sh"
 
 norm_lower() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]'; }
+display_style() {
+  case "$(norm_lower "$1")" in
+    lite) printf 'Lite' ;;
+    gamingplus) printf 'GamingPlus' ;;
+    legend) printf 'Legend' ;;
+    ninja) printf 'Ninja' ;;
+    *) printf '%s' "${1:-unknown}" ;;
+  esac
+}
 FINAL_STYLE="${DZ_FINAL_STYLE_ID:-${DZ_REQUESTED_STYLE:-${DZ_STYLE_ID:-}}}"
 FINAL_STYLE="$(norm_lower "$FINAL_STYLE")"
 MODE="${DZ_STYLE_EXECUTION_MODE:-final}"
@@ -33,28 +42,30 @@ read_prop_from_root() {
 
 lite_gate() {
   local root="$1"
-  local platform android sdk release
+  local platform android sdk release style_label platform_label
   platform="${DZ_PLATFORM_ID:-${PLATFORM_ID:-${ROM_PLATFORM:-}}}"
   android="${ANDROID_VERSION:-${DZ_ANDROID_VERSION:-}}"
   sdk="${SDK_VERSION:-${ANDROID_SDK:-${PLATFORM_SDK_VERSION:-}}}"
   release="$(read_prop_from_root "$root" 'ro.build.version.release')"
   [[ -z "$android" && -n "$release" ]] && android="$release"
   [[ -z "$sdk" ]] && sdk="$(read_prop_from_root "$root" 'ro.build.version.sdk')"
+  style_label="$(display_style "$FINAL_STYLE")"
+  platform_label="${platform:-unknown}"
 
   if [[ "$FINAL_STYLE" != "lite" ]]; then
-    echo "[Lite][OS3_A16] SKIPPED: final style is not lite (${FINAL_STYLE:-unknown})"
+    echo "⏭️ Skipping Lite OS3_A16 pack because STYLE=$style_label PLATFORM=$platform_label"
     exit 0
   fi
   if [[ "$MODE" == "base" ]]; then
-    echo "[Lite][OS3_A16] SKIPPED: Lite manual pack is final-style-only, current mode is base"
+    echo "⏭️ Skipping Lite OS3_A16 pack because STYLE=$style_label PLATFORM=$platform_label"
     exit 0
   fi
   if [[ "$platform" != "OS3_A16" ]]; then
-    echo "[Lite][OS3_A16] SKIPPED: platform is not OS3_A16 (${platform:-unknown})"
+    echo "⏭️ Skipping Lite OS3_A16 pack because STYLE=$style_label PLATFORM=$platform_label"
     exit 0
   fi
   if [[ "$android" != "16" && "$sdk" != "36" ]]; then
-    echo "[Lite][OS3_A16] SKIPPED: not Android 16 / SDK 36"
+    echo "⏭️ Skipping Lite OS3_A16 pack because STYLE=$style_label PLATFORM=$platform_label"
     exit 0
   fi
 }
@@ -137,7 +148,8 @@ main() {
   root=$(find_rom_root "${1:-}") || { echo "[Lite][OS3_A16] ERROR ROM root not found"; exit 1; }
   lite_prepare_reports
   lite_gate "$root"
-  echo "[Lite][OS3_A16] Applying Lite OS3_A16 Manual Runtime Smali Pack"
+  echo "✅ Lite OS3_A16 pack enabled for STYLE=Lite PLATFORM=OS3_A16"
+  echo "Applying DeadZone Lite OS3_A16 pack"
   lite_log_info "ROM root: $root"
 
   settings_apk=$(find_apk "$root" 'Settings.apk' '/(system|system_ext|product)/(priv-)?app/Settings/')
