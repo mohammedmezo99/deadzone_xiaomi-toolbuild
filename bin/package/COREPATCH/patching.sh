@@ -120,7 +120,7 @@ $method_head_escaped\\
 
 modify_invoke_custom_methods() {
   local decompile_dir="$1"
-  echo "🔎 Checking for invoke-custom in $decompile_dir..."
+  echo "Checking for invoke-custom in $decompile_dir..."
 
   # Use find with + instead of \; to batch files and suppress all grep errors
   local smali_files
@@ -243,14 +243,14 @@ patch_method_in_file() {
 
   # Check if file exists
   if [ ! -f "$file" ]; then
-    echo "⚠️ File not found: $(basename "$file")"
+    echo "⚠ File not found: $(basename "$file")"
     return
   fi
 
   local start
   start=$(grep -n "^[[:space:]]*\.method.* $method" "$file" | cut -d: -f1 | head -n1)
   [ -z "$start" ] && {
-    echo "⚠️ Method $method not found in $(basename "$file")"
+    echo "⚠ Method $method not found in $(basename "$file")"
     return
   }
 
@@ -266,7 +266,7 @@ patch_method_in_file() {
   done
 
   [ "$end" -eq 0 ] && {
-    echo "⚠️ End not found for $method"
+    echo "⚠ End not found for $method"
     return
   }
 
@@ -281,7 +281,7 @@ $method_head_escaped\\
     return v0\\
 .end method" "$file"
 
-  echo "✅ Patched $method to return $ret_val in $(basename "$file")"
+  echo "✓ Patched $method to return $ret_val in $(basename "$file")"
 }
 
 patch_return_void_in_file() {
@@ -290,14 +290,14 @@ patch_return_void_in_file() {
 
   # Check if file exists
   if [ ! -f "$file" ]; then
-    echo "⚠️ File not found: $(basename "$file")"
+    echo "⚠ File not found: $(basename "$file")"
     return
   fi
 
   local start
   start=$(grep -n "^[[:space:]]*\.method.* $method" "$file" | cut -d: -f1 | head -n1)
   [ -z "$start" ] && {
-    echo "⚠️ Method $method not found in $(basename "$file")"
+    echo "⚠ Method $method not found in $(basename "$file")"
     return
   }
 
@@ -313,7 +313,7 @@ patch_return_void_in_file() {
   done
 
   [ "$end" -eq 0 ] && {
-    echo "⚠️ Method $method end not found"
+    echo "⚠ Method $method end not found"
     return
   }
 
@@ -327,7 +327,7 @@ $method_head_escaped\\
     return-void\\
 .end method" "$file"
 
-  echo "✅ Patched $method -> return-void in $(basename "$file")"
+  echo "✓ Patched $method → return-void in $(basename "$file")"
 }
 
 patch_smali_method_in_file() {
@@ -376,14 +376,14 @@ patch_smali_method_in_file() {
 
   local inject_line=$((start + rel - 1))
 
-  # Inject each line.
+  # inject từng dòng
   while IFS= read -r line; do
     sed -i "${inject_line}a\\
 $line" "$file"
     inject_line=$((inject_line + 1))
   done <<< "$inject_code"
 
-  echo "✅ Injected code into $method in $(basename "$file")"
+  echo "✓ Injected code into $method in $(basename "$file")"
 }
 
 replace_line_contains_in_smali_method() {
@@ -437,7 +437,7 @@ replace_line_contains_in_smali_method() {
   sed -i "${real_line}c\\
 $replace_line" "$file"
 
-  echo "✅ Replaced line containing '$keyword' in $method ($(basename "$file"))"
+  echo "✓ Replaced line containing '$keyword' in $method ($(basename "$file"))"
 }
 
 patch_smali_after_keyword() {
@@ -451,7 +451,7 @@ patch_smali_after_keyword() {
     return
   }
 
-  # 1. Find the method start line.
+  # 1️⃣ Tìm dòng bắt đầu method
   local start
   start=$(grep -n "^[[:space:]]*\.method.* $method" "$file" | cut -d: -f1 | head -n1)
 
@@ -460,7 +460,7 @@ patch_smali_after_keyword() {
     return
   }
 
-  # 2. Find the .end method line.
+  # 2️⃣ Tìm .end method
   local total end=0 i="$start"
   total=$(wc -l < "$file")
 
@@ -477,7 +477,7 @@ patch_smali_after_keyword() {
     return
   }
 
-  # 3. Find the line containing the keyword inside the method.
+  # 3️⃣ Tìm dòng chứa keyword trong phạm vi method
   local rel
   rel=$(sed -n "${start},${end}p" "$file" \
     | grep -n "$keyword" \
@@ -490,14 +490,14 @@ patch_smali_after_keyword() {
 
   local inject_line=$((start + rel - 1))
 
-  # 4. Inject each line after the keyword.
+  # 4️⃣ Inject từng dòng sau keyword
   while IFS= read -r line; do
     sed -i "${inject_line}a\\
 $line" "$file"
     inject_line=$((inject_line + 1))
   done <<< "$inject_code"
 
-  echo "✅ Injected after '$keyword' in $method ($(basename "$file"))"
+  echo "✓ Injected after '$keyword' in $method ($(basename "$file"))"
 }
 
 delete_lines_in_smali_method() {
@@ -511,7 +511,7 @@ delete_lines_in_smali_method() {
     return 1
   }
 
-  # Find the method start line.
+  # Tìm dòng bắt đầu method
   local start
   start=$(grep -n "^[[:space:]]*\.method.* $method" "$file" | cut -d: -f1 | head -n1)
 
@@ -520,7 +520,7 @@ delete_lines_in_smali_method() {
     return 1
   }
 
-  # Find the method end line.
+  # Tìm dòng kết thúc method
   local total end=0 i="$start"
   total=$(wc -l < "$file")
 
@@ -537,23 +537,23 @@ delete_lines_in_smali_method() {
     return 1
   }
 
-  # Validate the requested line range.
+  # Kiểm tra hợp lệ
   if [ "$from_line" -lt 1 ] || [ "$to_line" -lt "$from_line" ]; then
     echo "⚠️ Invalid line range"
     return 1
   fi
 
-  # Calculate the real positions inside the file.
+  # Tính vị trí thực tế trong file
   local real_start=$((start + from_line))
   local real_end=$((start + to_line))
 
-  # Do not delete beyond .end method.
+  # Không cho xóa vượt .end method
   if [ "$real_end" -ge "$end" ]; then
     real_end=$((end - 1))
   fi
 
-  # Delete the selected lines.
+  # Thực hiện xóa
   sed -i "${real_start},${real_end}d" "$file"
 
-  echo "✅ Deleted lines $from_line -> $to_line inside $method in $(basename "$file")"
+  echo "✓ Deleted lines $from_line → $to_line inside $method in $(basename "$file")"
 }
